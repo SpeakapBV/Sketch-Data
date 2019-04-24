@@ -1,0 +1,36 @@
+{
+  "compatibleVersion": 3,
+  "bundleVersion": 1,
+  "icon": "icon.png",
+  "suppliesData": true,
+  "author": "Dennis de Jong",
+  "authorEmail": "dennis.jong@speakap.com",
+  "commands": [
+    {
+      "script": "main.js",
+      "handlers": {
+        "actions": {
+          "Startup": "onStartup",
+          "Shutdown": "onShutdown",
+          "SupplyName": "onSupplyName",
+          "SupplyJobTitle": "onSupplyJobTitle",
+          "SupplyFileName": "onSupplyFileName",
+          "SupplyGroupName": "onSupplyGroupName",
+          "SupplyNewsTitle": "onSupplyNewsTitle",
+          "SupplyPrivateMessage": "onSupplyPrivateMessage",
+          "SupplyUpdate": "onSupplyUpdate",
+          "SupplyNumber": "onSupplyNumber"
+        }
+      }
+    }
+  ],
+  "menu": {
+    "title": "Speakap Data"
+  },
+  "version": "0.1.0",
+  "description": "Plugin for randomly creating data like usernames, job titles etc.",
+  "name": "Speakap Data",
+  "identifier": "Speakap Data",
+  "disableCocoaScriptPreprocessor": true,
+  "appcast": "https://raw.githubusercontent.com//master/.appcast.xml"
+}
