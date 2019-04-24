@@ -10,6 +10,12 @@ Sketch plugin for easily adding mock data to your Sketch designs. Currently supp
 * Private messages
 * Updates
 * Western usernames
+* Email address
+* Phone Number
+* Timestamp in minutes
+
+TODO
+* Timestamp full date
 
 ## Usage Designers
 

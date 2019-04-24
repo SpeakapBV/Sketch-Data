@@ -19,7 +19,10 @@
           "SupplyNewsTitle": "onSupplyNewsTitle",
           "SupplyPrivateMessage": "onSupplyPrivateMessage",
           "SupplyUpdate": "onSupplyUpdate",
-          "SupplyNumber": "onSupplyNumber"
+          "SupplyNumber": "onSupplyNumber",
+          "SupplyEmailAddress": "onSupplyEmailAddress",
+          "SupplyPhoneNumber": "onSupplyPhoneNumber",
+          "SupplyTimestampMinutes": "onSupplyTimestampMinutes"
         }
       }
     }

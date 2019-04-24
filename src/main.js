@@ -1,3 +1,5 @@
+import { strict } from 'assert';
+
 const sketch = require('sketch')
 const { DataSupplier } = sketch
 const util = require('util')
@@ -27,6 +29,15 @@ export function onStartup () {
 
   // Register a method to supply a random number.
   DataSupplier.registerDataSupplier('public.text', 'Number', 'SupplyNumber');
+
+  // Register a method to supply a random email address.
+  DataSupplier.registerDataSupplier('public.text', 'Email address', 'SupplyEmailAddress');
+
+  // Register a method to supply a random phone number.
+  DataSupplier.registerDataSupplier('public.text', 'Phone number', 'SupplyPhoneNumber');
+
+  // Register a method to supply a random timestamp in minutes.
+  DataSupplier.registerDataSupplier('public.text', 'Timestamp minutes', 'SupplyTimestampMinutes');
 }
 
 export function onShutdown () {
@@ -161,3 +172,44 @@ export function onSupplyNumber (context) {
     }) 
 }
 
+export function onSupplyEmailAddress (context) {
+    var dataKey = context.data.key;
+    var dataCount = context.data.requestedCount;
+    const items = util.toArray(context.data.items).map(sketch.fromNative)
+    
+    var dataArray = require('./data/western-names.json');
+    
+    items.forEach((item, index) => {
+        var randomItem = dataArray[Math.floor(Math.random() * dataArray.length)];
+        randomItem = randomItem.toLowerCase().replace(" ", ".") + "@domain.com";
+        DataSupplier.supplyDataAtIndex(dataKey, randomItem, index);
+    })
+}
+
+export function onSupplyPhoneNumber (context) {
+    var dataKey = context.data.key;
+    var dataCount = context.data.requestedCount;
+    const items = util.toArray(context.data.items).map(sketch.fromNative)
+    
+    // Start the data to be provided at a random position in the array.
+    items.forEach((item, index) => {
+        let randomNumberOne = Math.floor(100 + Math.random() * 900);
+        let randomNumberTwo = Math.floor(1000 + Math.random() * 9000);
+        let phoneNumber = "1 415-" + randomNumberOne.toString() + "-" + randomNumberTwo.toString();
+        DataSupplier.supplyDataAtIndex(dataKey, phoneNumber, index);
+    }) 
+}
+
+export function onSupplyTimestampMinutes (context) {
+    var dataKey = context.data.key;
+    var dataCount = context.data.requestedCount;
+    const items = util.toArray(context.data.items).map(sketch.fromNative)
+    
+    items.forEach((item, index) => {
+        // Get minute
+        let randomNumber = Math.floor(Math.random() * Math.floor(45));
+        let timestamp = randomNumber.toString() + " minutes ago";
+        //console.log(timestamp);
+        DataSupplier.supplyDataAtIndex(dataKey, timestamp, index);
+    }) 
+}
