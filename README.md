@@ -1,8 +1,23 @@
-# SpeakapData
+# Speakap Data
+
+Sketch plugin for easily adding mock data to your Sketch designs. Currently supports:
+
+* File names
+* Group names
+* Job titles
+* News titles
+* Numbers
+* Private messages
+* Updates
+* Western usernames
+
+## Usage Designers
+
+Just download the `speakapdata.sketchplugin` and install it. The plugin should then show up in your Sketch application.
+
+## Usage development
 
 _This plugin was created using `skpm`. For a detailed explanation on how things work, checkout the [skpm Readme](https://github.com/skpm/skpm/blob/master/README.md)._
-
-## Usage
 
 Install the dependencies
 
@@ -70,24 +85,3 @@ skpm log
 ```
 
 The `-f` option causes `skpm log` to not stop when the end of logs is reached, but rather to wait for additional data to be appended to the input
-
-## Publishing your plugin
-
-```bash
-skpm publish <bump>
-```
-
-(where `bump` can be `patch`, `minor` or `major`)
-
-`skpm publish` will create a new release on your GitHub repository and create an appcast file in order for Sketch users to be notified of the update.
-
-You will need to specify a `repository` in the `package.json`:
-
-```diff
-...
-+ "repository" : {
-+   "type": "git",
-+   "url": "git+https://github.com/ORG/NAME.git"
-+  }
-...
-```
