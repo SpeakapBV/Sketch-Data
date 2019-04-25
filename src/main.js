@@ -11,6 +11,9 @@ export function onStartup () {
 
   // Register a method to supply a random group name.
   DataSupplier.registerDataSupplier('public.text', 'Group name', 'SupplyGroupName');
+
+  // Register a method to supply a random department name.
+  DataSupplier.registerDataSupplier('public.text', 'Department name', 'SupplyDeptName');
   
   // Register a method to supply a random job title.
   DataSupplier.registerDataSupplier('public.text', 'Job title', 'SupplyJobTitle');
@@ -50,7 +53,6 @@ export function onShutdown () {
 
 export function onSupplyName (context) {
     var dataKey = context.data.key;
-    var dataCount = context.data.requestedCount;
     const items = util.toArray(context.data.items).map(sketch.fromNative)
     
     var dataArray = require('./data/western-names.json');
@@ -72,7 +74,6 @@ export function onSupplyName (context) {
 
 export function onSupplyJobTitle (context) {
     var dataKey = context.data.key;
-    var dataCount = context.data.requestedCount;
     const items = util.toArray(context.data.items).map(sketch.fromNative)
     
     var dataArray = require('./data/job-titles.json');
@@ -86,7 +87,6 @@ export function onSupplyJobTitle (context) {
 
 export function onSupplyFileName (context) {
     var dataKey = context.data.key;
-    var dataCount = context.data.requestedCount;
     const items = util.toArray(context.data.items).map(sketch.fromNative)
     
     var dataArray = require('./data/file-names.json');
@@ -99,22 +99,86 @@ export function onSupplyFileName (context) {
 }
 
 export function onSupplyGroupName (context) {
-    var dataKey = context.data.key;
-    var dataCount = context.data.requestedCount;
+    const dataKey = context.data.key;
     const items = util.toArray(context.data.items).map(sketch.fromNative)
     
     var dataArray = require('./data/group-names.json');
     var selectedData = [];
+    var selectedKeys = [];
     
     // Start the data to be provided at a random position in the array.
     items.forEach((item, index) => {
-        var randomItem = dataArray[Math.floor(Math.random() * dataArray.length)];
-        selectedData.push(randomItem);
+
+        // Get random key
+        var randomKey = Math.floor(Math.random() * dataArray.length);
+
+        // Check if random key is already in selected keys
+        var i = 0;
+        while(selectedKeys.includes(randomKey) && i < dataArray.length) {
+            i++;
+            // If it's already in selected keys, generate a new one
+            randomKey = Math.floor(Math.random() * dataArray.length);
+            //console.log("Random key already in array", randomKey);
+        }
+
+        if(i >= dataArray.length) {
+            selectedData.push("Out of data");
+        } else {
+            // Push new key into selected keys
+            selectedKeys.push(randomKey);
+            //console.log("Pushed new key into array", selectedKeys);
+
+            // Grab new item and push it into selected data
+            var randomItem = dataArray[randomKey];
+            selectedData.push(randomItem);
+            //console.log("Pushed new data into array", selectedData);
+        }
     })
 
     // Sort array alphabetically
     selectedData.sort().reverse();
-    console.log(selectedData);
+
+    items.forEach((item, index) => {
+        DataSupplier.supplyDataAtIndex(dataKey, selectedData[index], index);
+    })
+}
+
+export function onSupplyDeptName (context) {
+    const dataKey = context.data.key;
+    const items = util.toArray(context.data.items).map(sketch.fromNative)
+    
+    var dataArray = require('./data/department-names.json');
+    var selectedData = [];
+    var selectedKeys = [];
+    
+    // Get data for all selected layers
+    items.forEach((item, index) => {
+
+        // Get random key
+        var randomKey = Math.floor(Math.random() * dataArray.length);
+
+        // Check if random key is already in selected keys
+        var i = 0;
+        while(selectedKeys.includes(randomKey) && i < dataArray.length) {
+            i++;
+            // If it's already in selected keys, generate a new one
+            randomKey = Math.floor(Math.random() * dataArray.length);
+        }
+
+        if(i >= dataArray.length) {
+            selectedData.push("Out of data");
+        } else {
+            // Push new key into selected keys
+            selectedKeys.push(randomKey);
+
+            // Grab new item and push it into selected data
+            var randomItem = dataArray[randomKey];
+            selectedData.push(randomItem);
+        }
+    })
+
+    // Sort array alphabetically
+    selectedData.sort().reverse();
 
     items.forEach((item, index) => {
         DataSupplier.supplyDataAtIndex(dataKey, selectedData[index], index);
@@ -123,7 +187,6 @@ export function onSupplyGroupName (context) {
 
 export function onSupplyNewsTitle (context) {
     var dataKey = context.data.key;
-    var dataCount = context.data.requestedCount;
     const items = util.toArray(context.data.items).map(sketch.fromNative)
     
     var dataArray = require('./data/news-titles.json');
@@ -137,7 +200,6 @@ export function onSupplyNewsTitle (context) {
 
 export function onSupplyPrivateMessage (context) {
     var dataKey = context.data.key;
-    var dataCount = context.data.requestedCount;
     const items = util.toArray(context.data.items).map(sketch.fromNative)
     
     var dataArray = require('./data/private-messages.json');
@@ -151,7 +213,6 @@ export function onSupplyPrivateMessage (context) {
 
 export function onSupplyUpdate (context) {
     var dataKey = context.data.key;
-    var dataCount = context.data.requestedCount;
     const items = util.toArray(context.data.items).map(sketch.fromNative)
     
     var dataArray = require('./data/updates.json');
@@ -165,7 +226,6 @@ export function onSupplyUpdate (context) {
 
 export function onSupplyNumber (context) {
     var dataKey = context.data.key;
-    var dataCount = context.data.requestedCount;
     const items = util.toArray(context.data.items).map(sketch.fromNative)
     
     // Start the data to be provided at a random position in the array.
@@ -177,7 +237,6 @@ export function onSupplyNumber (context) {
 
 export function onSupplyEmailAddress (context) {
     var dataKey = context.data.key;
-    var dataCount = context.data.requestedCount;
     const items = util.toArray(context.data.items).map(sketch.fromNative)
     
     var dataArray = require('./data/western-names.json');
@@ -191,7 +250,6 @@ export function onSupplyEmailAddress (context) {
 
 export function onSupplyPhoneNumber (context) {
     var dataKey = context.data.key;
-    var dataCount = context.data.requestedCount;
     const items = util.toArray(context.data.items).map(sketch.fromNative)
     
     // Start the data to be provided at a random position in the array.
@@ -205,7 +263,6 @@ export function onSupplyPhoneNumber (context) {
 
 export function onSupplyTimestampMinutes (context) {
     var dataKey = context.data.key;
-    var dataCount = context.data.requestedCount;
     const items = util.toArray(context.data.items).map(sketch.fromNative)
     
     items.forEach((item, index) => {
@@ -219,7 +276,6 @@ export function onSupplyTimestampMinutes (context) {
 
 export function onSupplyTimestampFullDate (context) {
     var dataKey = context.data.key;
-    var dataCount = context.data.requestedCount;
     const items = util.toArray(context.data.items).map(sketch.fromNative)
 
     var monthsArray = ["January", "February", "March", "April", "June", "July", "August", "September", "Oktober", "November", "December"]

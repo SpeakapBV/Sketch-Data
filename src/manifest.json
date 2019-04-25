@@ -16,6 +16,7 @@
           "SupplyJobTitle": "onSupplyJobTitle",
           "SupplyFileName": "onSupplyFileName",
           "SupplyGroupName": "onSupplyGroupName",
+          "SupplyDeptName": "onSupplyDeptName",
           "SupplyNewsTitle": "onSupplyNewsTitle",
           "SupplyPrivateMessage": "onSupplyPrivateMessage",
           "SupplyUpdate": "onSupplyUpdate",

@@ -1968,6 +1968,17 @@ module.exports = g;
 
 /***/ }),
 
+/***/ "./src/data/department-names.json":
+/*!****************************************!*\
+  !*** ./src/data/department-names.json ***!
+  \****************************************/
+/*! exports provided: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, default */
+/***/ (function(module) {
+
+module.exports = ["Commercial","Manufacturing","Research and development","Marketing","Product Design","Education","Accounting and Finance","Human Resource","Transportation","Management","Operations","IT","Development","Quality Assurance","Internal Communications","Information Design","Training and Publications","Customer Communications","Customer Support","Security","Recruitment"];
+
+/***/ }),
+
 /***/ "./src/data/file-names.json":
 /*!**********************************!*\
   !*** ./src/data/file-names.json ***!
@@ -1983,10 +1994,10 @@ module.exports = ["Customer Support Survey","Prospects Q3","Notes template","Bro
 /*!***********************************!*\
   !*** ./src/data/group-names.json ***!
   \***********************************/
-/*! exports provided: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, default */
+/*! exports provided: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, default */
 /***/ (function(module) {
 
-module.exports = ["Sales USA","Sales NL","Sales UK","Marketing","Product Design","Groceries","Case: CRM Implementation","HR News","Feedback & Reports","Marketing News","Company Health","Tech News","Cashiers"];
+module.exports = ["Sales USA","Sales NL","Sales UK","Marketing","Product Design","Groceries","Case: CRM Implementation","HR News","Feedback & Reports","Marketing News","Company Health","Tech News","Cashiers","Company Drinks","Brainstorm","Demos","Deploy updates","Sales Successes","Design and print","Office Expansion","Recruitment","Culture Crew","Product news","Sales news","Company sports","Technical support","Board games","Customer info","Internal communication feedback","Ideas"];
 
 /***/ }),
 
@@ -2049,7 +2060,7 @@ module.exports = ["Clara Reeve","Tamzin Sharma","Lizzie Stamp","Gabriela Robbins
 /*!*********************!*\
   !*** ./src/main.js ***!
   \*********************/
-/*! exports provided: onStartup, onShutdown, onSupplyName, onSupplyJobTitle, onSupplyFileName, onSupplyGroupName, onSupplyNewsTitle, onSupplyPrivateMessage, onSupplyUpdate, onSupplyNumber, onSupplyEmailAddress, onSupplyPhoneNumber, onSupplyTimestampMinutes, onSupplyTimestampFullDate */
+/*! exports provided: onStartup, onShutdown, onSupplyName, onSupplyJobTitle, onSupplyFileName, onSupplyGroupName, onSupplyDeptName, onSupplyNewsTitle, onSupplyPrivateMessage, onSupplyUpdate, onSupplyNumber, onSupplyEmailAddress, onSupplyPhoneNumber, onSupplyTimestampMinutes, onSupplyTimestampFullDate */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2060,6 +2071,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyJobTitle", function() { return onSupplyJobTitle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyFileName", function() { return onSupplyFileName; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyGroupName", function() { return onSupplyGroupName; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyDeptName", function() { return onSupplyDeptName; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyNewsTitle", function() { return onSupplyNewsTitle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyPrivateMessage", function() { return onSupplyPrivateMessage; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyUpdate", function() { return onSupplyUpdate; });
@@ -2082,7 +2094,9 @@ function onStartup() {
   // Register a method to supply a random western name.
   DataSupplier.registerDataSupplier('public.text', 'Western name', 'SupplyName'); // Register a method to supply a random group name.
 
-  DataSupplier.registerDataSupplier('public.text', 'Group name', 'SupplyGroupName'); // Register a method to supply a random job title.
+  DataSupplier.registerDataSupplier('public.text', 'Group name', 'SupplyGroupName'); // Register a method to supply a random department name.
+
+  DataSupplier.registerDataSupplier('public.text', 'Department name', 'SupplyDeptName'); // Register a method to supply a random job title.
 
   DataSupplier.registerDataSupplier('public.text', 'Job title', 'SupplyJobTitle'); // Register a method to supply a random file name.
 
@@ -2110,7 +2124,6 @@ function onShutdown() {
 }
 function onSupplyName(context) {
   var dataKey = context.data.key;
-  var dataCount = context.data.requestedCount;
   var items = util.toArray(context.data.items).map(sketch.fromNative);
 
   var dataArray = __webpack_require__(/*! ./data/western-names.json */ "./src/data/western-names.json");
@@ -2129,7 +2142,6 @@ function onSupplyName(context) {
 }
 function onSupplyJobTitle(context) {
   var dataKey = context.data.key;
-  var dataCount = context.data.requestedCount;
   var items = util.toArray(context.data.items).map(sketch.fromNative);
 
   var dataArray = __webpack_require__(/*! ./data/job-titles.json */ "./src/data/job-titles.json"); // Start the data to be provided at a random position in the array.
@@ -2142,7 +2154,6 @@ function onSupplyJobTitle(context) {
 }
 function onSupplyFileName(context) {
   var dataKey = context.data.key;
-  var dataCount = context.data.requestedCount;
   var items = util.toArray(context.data.items).map(sketch.fromNative);
 
   var dataArray = __webpack_require__(/*! ./data/file-names.json */ "./src/data/file-names.json"); // Start the data to be provided at a random position in the array.
@@ -2155,27 +2166,81 @@ function onSupplyFileName(context) {
 }
 function onSupplyGroupName(context) {
   var dataKey = context.data.key;
-  var dataCount = context.data.requestedCount;
   var items = util.toArray(context.data.items).map(sketch.fromNative);
 
   var dataArray = __webpack_require__(/*! ./data/group-names.json */ "./src/data/group-names.json");
 
-  var selectedData = []; // Start the data to be provided at a random position in the array.
+  var selectedData = [];
+  var selectedKeys = []; // Start the data to be provided at a random position in the array.
 
   items.forEach(function (item, index) {
-    var randomItem = dataArray[Math.floor(Math.random() * dataArray.length)];
-    selectedData.push(randomItem);
+    // Get random key
+    var randomKey = Math.floor(Math.random() * dataArray.length); // Check if random key is already in selected keys
+
+    var i = 0;
+
+    while (selectedKeys.includes(randomKey) && i < dataArray.length) {
+      i++; // If it's already in selected keys, generate a new one
+
+      randomKey = Math.floor(Math.random() * dataArray.length); //console.log("Random key already in array", randomKey);
+    }
+
+    if (i >= dataArray.length) {
+      selectedData.push("Out of data");
+    } else {
+      // Push new key into selected keys
+      selectedKeys.push(randomKey); //console.log("Pushed new key into array", selectedKeys);
+      // Grab new item and push it into selected data
+
+      var randomItem = dataArray[randomKey];
+      selectedData.push(randomItem); //console.log("Pushed new data into array", selectedData);
+    }
   }); // Sort array alphabetically
 
   selectedData.sort().reverse();
-  console.log(selectedData);
+  items.forEach(function (item, index) {
+    DataSupplier.supplyDataAtIndex(dataKey, selectedData[index], index);
+  });
+}
+function onSupplyDeptName(context) {
+  var dataKey = context.data.key;
+  var items = util.toArray(context.data.items).map(sketch.fromNative);
+
+  var dataArray = __webpack_require__(/*! ./data/department-names.json */ "./src/data/department-names.json");
+
+  var selectedData = [];
+  var selectedKeys = []; // Get data for all selected layers
+
+  items.forEach(function (item, index) {
+    // Get random key
+    var randomKey = Math.floor(Math.random() * dataArray.length); // Check if random key is already in selected keys
+
+    var i = 0;
+
+    while (selectedKeys.includes(randomKey) && i < dataArray.length) {
+      i++; // If it's already in selected keys, generate a new one
+
+      randomKey = Math.floor(Math.random() * dataArray.length);
+    }
+
+    if (i >= dataArray.length) {
+      selectedData.push("Out of data");
+    } else {
+      // Push new key into selected keys
+      selectedKeys.push(randomKey); // Grab new item and push it into selected data
+
+      var randomItem = dataArray[randomKey];
+      selectedData.push(randomItem);
+    }
+  }); // Sort array alphabetically
+
+  selectedData.sort().reverse();
   items.forEach(function (item, index) {
     DataSupplier.supplyDataAtIndex(dataKey, selectedData[index], index);
   });
 }
 function onSupplyNewsTitle(context) {
   var dataKey = context.data.key;
-  var dataCount = context.data.requestedCount;
   var items = util.toArray(context.data.items).map(sketch.fromNative);
 
   var dataArray = __webpack_require__(/*! ./data/news-titles.json */ "./src/data/news-titles.json"); // Start the data to be provided at a random position in the array.
@@ -2188,7 +2253,6 @@ function onSupplyNewsTitle(context) {
 }
 function onSupplyPrivateMessage(context) {
   var dataKey = context.data.key;
-  var dataCount = context.data.requestedCount;
   var items = util.toArray(context.data.items).map(sketch.fromNative);
 
   var dataArray = __webpack_require__(/*! ./data/private-messages.json */ "./src/data/private-messages.json"); // Start the data to be provided at a random position in the array.
@@ -2201,7 +2265,6 @@ function onSupplyPrivateMessage(context) {
 }
 function onSupplyUpdate(context) {
   var dataKey = context.data.key;
-  var dataCount = context.data.requestedCount;
   var items = util.toArray(context.data.items).map(sketch.fromNative);
 
   var dataArray = __webpack_require__(/*! ./data/updates.json */ "./src/data/updates.json"); // Start the data to be provided at a random position in the array.
@@ -2214,7 +2277,6 @@ function onSupplyUpdate(context) {
 }
 function onSupplyNumber(context) {
   var dataKey = context.data.key;
-  var dataCount = context.data.requestedCount;
   var items = util.toArray(context.data.items).map(sketch.fromNative); // Start the data to be provided at a random position in the array.
 
   items.forEach(function (item, index) {
@@ -2224,7 +2286,6 @@ function onSupplyNumber(context) {
 }
 function onSupplyEmailAddress(context) {
   var dataKey = context.data.key;
-  var dataCount = context.data.requestedCount;
   var items = util.toArray(context.data.items).map(sketch.fromNative);
 
   var dataArray = __webpack_require__(/*! ./data/western-names.json */ "./src/data/western-names.json");
@@ -2237,7 +2298,6 @@ function onSupplyEmailAddress(context) {
 }
 function onSupplyPhoneNumber(context) {
   var dataKey = context.data.key;
-  var dataCount = context.data.requestedCount;
   var items = util.toArray(context.data.items).map(sketch.fromNative); // Start the data to be provided at a random position in the array.
 
   items.forEach(function (item, index) {
@@ -2249,7 +2309,6 @@ function onSupplyPhoneNumber(context) {
 }
 function onSupplyTimestampMinutes(context) {
   var dataKey = context.data.key;
-  var dataCount = context.data.requestedCount;
   var items = util.toArray(context.data.items).map(sketch.fromNative);
   items.forEach(function (item, index) {
     // Get minute
@@ -2261,7 +2320,6 @@ function onSupplyTimestampMinutes(context) {
 }
 function onSupplyTimestampFullDate(context) {
   var dataKey = context.data.key;
-  var dataCount = context.data.requestedCount;
   var items = util.toArray(context.data.items).map(sketch.fromNative);
   var monthsArray = ["January", "February", "March", "April", "June", "July", "August", "September", "Oktober", "November", "December"];
   items.forEach(function (item, index) {
@@ -2311,6 +2369,7 @@ that['onSupplyName'] = __skpm_run.bind(this, 'onSupplyName');
 that['onSupplyJobTitle'] = __skpm_run.bind(this, 'onSupplyJobTitle');
 that['onSupplyFileName'] = __skpm_run.bind(this, 'onSupplyFileName');
 that['onSupplyGroupName'] = __skpm_run.bind(this, 'onSupplyGroupName');
+that['onSupplyDeptName'] = __skpm_run.bind(this, 'onSupplyDeptName');
 that['onSupplyNewsTitle'] = __skpm_run.bind(this, 'onSupplyNewsTitle');
 that['onSupplyPrivateMessage'] = __skpm_run.bind(this, 'onSupplyPrivateMessage');
 that['onSupplyUpdate'] = __skpm_run.bind(this, 'onSupplyUpdate');
