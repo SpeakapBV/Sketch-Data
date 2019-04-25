@@ -2049,7 +2049,7 @@ module.exports = ["Clara Reeve","Tamzin Sharma","Lizzie Stamp","Gabriela Robbins
 /*!*********************!*\
   !*** ./src/main.js ***!
   \*********************/
-/*! exports provided: onStartup, onShutdown, onSupplyName, onSupplyJobTitle, onSupplyFileName, onSupplyGroupName, onSupplyNewsTitle, onSupplyPrivateMessage, onSupplyUpdate, onSupplyNumber, onSupplyEmailAddress, onSupplyPhoneNumber, onSupplyTimestampMinutes */
+/*! exports provided: onStartup, onShutdown, onSupplyName, onSupplyJobTitle, onSupplyFileName, onSupplyGroupName, onSupplyNewsTitle, onSupplyPrivateMessage, onSupplyUpdate, onSupplyNumber, onSupplyEmailAddress, onSupplyPhoneNumber, onSupplyTimestampMinutes, onSupplyTimestampFullDate */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2067,6 +2067,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyEmailAddress", function() { return onSupplyEmailAddress; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyPhoneNumber", function() { return onSupplyPhoneNumber; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyTimestampMinutes", function() { return onSupplyTimestampMinutes; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyTimestampFullDate", function() { return onSupplyTimestampFullDate; });
 /* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! assert */ "./node_modules/assert/assert.js");
 /* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(assert__WEBPACK_IMPORTED_MODULE_0__);
 
@@ -2099,7 +2100,9 @@ function onStartup() {
 
   DataSupplier.registerDataSupplier('public.text', 'Phone number', 'SupplyPhoneNumber'); // Register a method to supply a random timestamp in minutes.
 
-  DataSupplier.registerDataSupplier('public.text', 'Timestamp minutes', 'SupplyTimestampMinutes');
+  DataSupplier.registerDataSupplier('public.text', 'Timestamp / Minutes', 'SupplyTimestampMinutes'); // Register a method to supply a random timestamp in full date.
+
+  DataSupplier.registerDataSupplier('public.text', 'Timestamp / Full date', 'SupplyTimestampFullDate');
 }
 function onShutdown() {
   // Deregister the plugin
@@ -2119,7 +2122,7 @@ function onSupplyName(context) {
     selectedData.push(randomItem);
   }); // Sort array alphabetically
 
-  selectedData.sort();
+  selectedData.sort().reverse();
   items.forEach(function (item, index) {
     DataSupplier.supplyDataAtIndex(dataKey, selectedData[index], index);
   });
@@ -2164,7 +2167,7 @@ function onSupplyGroupName(context) {
     selectedData.push(randomItem);
   }); // Sort array alphabetically
 
-  selectedData.sort();
+  selectedData.sort().reverse();
   console.log(selectedData);
   items.forEach(function (item, index) {
     DataSupplier.supplyDataAtIndex(dataKey, selectedData[index], index);
@@ -2256,6 +2259,20 @@ function onSupplyTimestampMinutes(context) {
     DataSupplier.supplyDataAtIndex(dataKey, timestamp, index);
   });
 }
+function onSupplyTimestampFullDate(context) {
+  var dataKey = context.data.key;
+  var dataCount = context.data.requestedCount;
+  var items = util.toArray(context.data.items).map(sketch.fromNative);
+  var monthsArray = ["January", "February", "March", "April", "June", "July", "August", "September", "Oktober", "November", "December"];
+  items.forEach(function (item, index) {
+    // Get random day
+    var randomNumber = Math.floor(Math.random() * Math.floor(29));
+    var randomMonth = monthsArray[Math.floor(Math.random() * monthsArray.length)];
+    var timestamp = randomMonth + " " + randomNumber.toString() + ", 2019";
+    console.log(timestamp);
+    DataSupplier.supplyDataAtIndex(dataKey, timestamp, index);
+  });
+}
 
 /***/ }),
 
@@ -2301,6 +2318,7 @@ that['onSupplyNumber'] = __skpm_run.bind(this, 'onSupplyNumber');
 that['onSupplyEmailAddress'] = __skpm_run.bind(this, 'onSupplyEmailAddress');
 that['onSupplyPhoneNumber'] = __skpm_run.bind(this, 'onSupplyPhoneNumber');
 that['onSupplyTimestampMinutes'] = __skpm_run.bind(this, 'onSupplyTimestampMinutes');
+that['onSupplyTimestampFullDate'] = __skpm_run.bind(this, 'onSupplyTimestampFullDate');
 that['onRun'] = __skpm_run.bind(this, 'default')
 
 //# sourceMappingURL=main.js.map

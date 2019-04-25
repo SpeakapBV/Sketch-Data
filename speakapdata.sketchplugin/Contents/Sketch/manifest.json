@@ -22,7 +22,8 @@
           "SupplyNumber": "onSupplyNumber",
           "SupplyEmailAddress": "onSupplyEmailAddress",
           "SupplyPhoneNumber": "onSupplyPhoneNumber",
-          "SupplyTimestampMinutes": "onSupplyTimestampMinutes"
+          "SupplyTimestampMinutes": "onSupplyTimestampMinutes",
+          "SupplyTimestampFullDate": "onSupplyTimestampFullDate"
         }
       }
     }
@@ -30,7 +31,7 @@
   "menu": {
     "title": "Speakap Data"
   },
-  "version": "0.1.0",
+  "version": "0.1.01",
   "description": "Plugin for randomly creating data like usernames, job titles etc.",
   "name": "Speakap Data",
   "identifier": "Speakap Data",

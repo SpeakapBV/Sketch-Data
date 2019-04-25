@@ -22,7 +22,8 @@
           "SupplyNumber": "onSupplyNumber",
           "SupplyEmailAddress": "onSupplyEmailAddress",
           "SupplyPhoneNumber": "onSupplyPhoneNumber",
-          "SupplyTimestampMinutes": "onSupplyTimestampMinutes"
+          "SupplyTimestampMinutes": "onSupplyTimestampMinutes",
+          "SupplyTimestampFullDate": "onSupplyTimestampFullDate"
         }
       }
     }

@@ -1,6 +1,6 @@
 {
   "name": "speakapdata",
-  "version": "0.1.0",
+  "version": "0.1.01",
   "description": "Plugin for randomly creating data like usernames, job titles etc.",
   "engines": {
     "sketch": ">=3.0"

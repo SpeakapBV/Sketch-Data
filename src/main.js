@@ -37,7 +37,10 @@ export function onStartup () {
   DataSupplier.registerDataSupplier('public.text', 'Phone number', 'SupplyPhoneNumber');
 
   // Register a method to supply a random timestamp in minutes.
-  DataSupplier.registerDataSupplier('public.text', 'Timestamp minutes', 'SupplyTimestampMinutes');
+  DataSupplier.registerDataSupplier('public.text', 'Timestamp / Minutes', 'SupplyTimestampMinutes');
+
+  // Register a method to supply a random timestamp in full date.
+  DataSupplier.registerDataSupplier('public.text', 'Timestamp / Full date', 'SupplyTimestampFullDate');
 }
 
 export function onShutdown () {
@@ -60,7 +63,7 @@ export function onSupplyName (context) {
     })
 
     // Sort array alphabetically
-    selectedData.sort();
+    selectedData.sort().reverse();
 
     items.forEach((item, index) => {
         DataSupplier.supplyDataAtIndex(dataKey, selectedData[index], index);
@@ -110,7 +113,7 @@ export function onSupplyGroupName (context) {
     })
 
     // Sort array alphabetically
-    selectedData.sort();
+    selectedData.sort().reverse();
     console.log(selectedData);
 
     items.forEach((item, index) => {
@@ -210,6 +213,23 @@ export function onSupplyTimestampMinutes (context) {
         let randomNumber = Math.floor(Math.random() * Math.floor(45));
         let timestamp = randomNumber.toString() + " minutes ago";
         //console.log(timestamp);
+        DataSupplier.supplyDataAtIndex(dataKey, timestamp, index);
+    }) 
+}
+
+export function onSupplyTimestampFullDate (context) {
+    var dataKey = context.data.key;
+    var dataCount = context.data.requestedCount;
+    const items = util.toArray(context.data.items).map(sketch.fromNative)
+
+    var monthsArray = ["January", "February", "March", "April", "June", "July", "August", "September", "Oktober", "November", "December"]
+    
+    items.forEach((item, index) => {
+        // Get random day
+        const randomNumber = Math.floor(Math.random() * Math.floor(29));
+        const randomMonth = monthsArray[Math.floor(Math.random() * monthsArray.length)];
+        const timestamp = randomMonth + " " + randomNumber.toString() + ", 2019";
+        console.log(timestamp);
         DataSupplier.supplyDataAtIndex(dataKey, timestamp, index);
     }) 
 }
