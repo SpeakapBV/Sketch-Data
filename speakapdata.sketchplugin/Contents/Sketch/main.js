@@ -1968,6 +1968,47 @@ module.exports = g;
 
 /***/ }),
 
+/***/ "./src/data sync recursive ^\\.\\/.*\\.json$":
+/*!**************************************!*\
+  !*** ./src/data sync ^\.\/.*\.json$ ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var map = {
+	"./department-names.json": "./src/data/department-names.json",
+	"./file-names.json": "./src/data/file-names.json",
+	"./group-names.json": "./src/data/group-names.json",
+	"./job-titles.json": "./src/data/job-titles.json",
+	"./news-titles.json": "./src/data/news-titles.json",
+	"./private-messages.json": "./src/data/private-messages.json",
+	"./updates-long.json": "./src/data/updates-long.json",
+	"./updates-short.json": "./src/data/updates-short.json",
+	"./western-names.json": "./src/data/western-names.json"
+};
+
+
+function webpackContext(req) {
+	var id = webpackContextResolve(req);
+	return __webpack_require__(id);
+}
+function webpackContextResolve(req) {
+	if(!__webpack_require__.o(map, req)) {
+		var e = new Error("Cannot find module '" + req + "'");
+		e.code = 'MODULE_NOT_FOUND';
+		throw e;
+	}
+	return map[req];
+}
+webpackContext.keys = function webpackContextKeys() {
+	return Object.keys(map);
+};
+webpackContext.resolve = webpackContextResolve;
+module.exports = webpackContext;
+webpackContext.id = "./src/data sync recursive ^\\.\\/.*\\.json$";
+
+/***/ }),
+
 /***/ "./src/data/department-names.json":
 /*!****************************************!*\
   !*** ./src/data/department-names.json ***!
@@ -2034,14 +2075,25 @@ module.exports = ["Hi! Did you check the new product catalog?","No I haven’t s
 
 /***/ }),
 
-/***/ "./src/data/updates.json":
-/*!*******************************!*\
-  !*** ./src/data/updates.json ***!
-  \*******************************/
-/*! exports provided: 0, 1, 2, 3, default */
+/***/ "./src/data/updates-long.json":
+/*!************************************!*\
+  !*** ./src/data/updates-long.json ***!
+  \************************************/
+/*! exports provided: 0, 1, 2, 3, 4, 5, default */
 /***/ (function(module) {
 
-module.exports = ["Notice: A car from Waternet drove past the building with the announcement that due to a calamity the water will be shut down until further notice.","As we gear up for the launch of our first research study on Jan 24, we've built a 360 degree launch plan (across all markets). Part of that includes driving some excitement/momentum for the study with a pre-launch sign up page (prompting folks to be the first to receive it when goes live). Full launch details and final assets will be provided here on Jan 24 (day of launch).","Hey team, I have a birthday today! Using magic forces (thanks Jane McDoe) I've brought you these cakes. Enjoy!","After a long recruitment process Adam Smith has been elected as our new Marketing manager. Adam will be replacing Susan as of next monday. If you want to welcome our new colleague and pay him a visit before his introduction, his office is at the third floor."];
+module.exports = ["As we gear up for the launch of our first research study on Jan 24, we've built a 360 degree launch plan (across all markets). Part of that includes driving some excitement/momentum for the study with a pre-launch sign up page (prompting folks to be the first to receive it when goes live). Full launch details and final assets will be provided here on Jan 24 (day of launch).","After a long recruitment process Adam Smith has been elected as our new Marketing manager. Adam will be replacing Susan as of next monday. If you want to welcome our new colleague and pay him a visit before his introduction, his office is at the third floor. Or just leave him a message on this post :-)","Family communication study looks at topics such as family rules, family roles or family dialectics and how those factors could affect the communication between family members. Researchers develop theories to understand communication behaviors. Family communication study also digs deep into certain time periods of family life such as marriage, parenthood or divorce and how communication stands in those situations. It is important for family members to understand communication as a trusted way which leads to a well constructed family.","Nonverbal cues are heavily relied on to express communication and to interpret others' communication and can replace or substitute verbal messages. However, non-verbal communication is ambiguous. When verbal messages contradict non-verbal messages, observation of non-verbal behaviour is relied on to judge another's attitudes and feelings, rather than assuming the truth of the verbal message alone.Unfortunately, we still have to cover a case when we we add something new to the resource of known message type. As we did for video in news. We believe that for this kind of cases we need to tackle the problem from the product perspective.","The landlady was going to reply, but was prevented by the peace-making sergeant, sorely to the displeasure of Partridge, who was a great lover of what is called fun, and a great promoter of those harmless quarrels which tend rather to the production of comical than tragical incidents.","We have an idea to introduce fallback for unknown message types on client side for the future. For this we will add 'fallback' section to every message type from  the API perspective. On the client side, we introduce functionality which will use fallback data from the message resource."];
+
+/***/ }),
+
+/***/ "./src/data/updates-short.json":
+/*!*************************************!*\
+  !*** ./src/data/updates-short.json ***!
+  \*************************************/
+/*! exports provided: 0, 1, 2, 3, 4, 5, 6, default */
+/***/ (function(module) {
+
+module.exports = ["A car from Waternet drove past the building with the announcement that due to a calamity the water will be shut down until further notice.","Hey team, I have a birthday today! Using magic forces (thanks Jane McDoe) I've brought you these cakes. Enjoy!","New report by Johnny Snow. Also great landingpage example to showcase some information about the research before people download it by signing up, good to capture leads.","Many different non-verbal channels are engaged at the same time in communication acts and allow the chance for simultaneous messages to be sent and received.","It’s been a whirlwind few months for everyone at our company. We are delighted to announce that we are the proud first occupants of the WeWork Coworking Office Space.","I think Aarons work looks great! What do you think?","Many physical activities provide opportunities to play and have fun. Not only can these activities be fun but can also improve physical and mental states."];
 
 /***/ }),
 
@@ -2060,21 +2112,23 @@ module.exports = ["Clara Reeve","Tamzin Sharma","Lizzie Stamp","Gabriela Robbins
 /*!*********************!*\
   !*** ./src/main.js ***!
   \*********************/
-/*! exports provided: onStartup, onShutdown, onSupplyName, onSupplyJobTitle, onSupplyFileName, onSupplyGroupName, onSupplyDeptName, onSupplyNewsTitle, onSupplyPrivateMessage, onSupplyUpdate, onSupplyNumber, onSupplyEmailAddress, onSupplyPhoneNumber, onSupplyTimestampMinutes, onSupplyTimestampFullDate */
+/*! exports provided: onStartup, onShutdown, retrieveData, onSupplyJobTitle, onSupplyFileName, onSupplyNewsTitle, onSupplyPrivateMessage, onSupplyUpdateShort, onSupplyUpdateLong, onSupplyName, onSupplyGroupName, onSupplyDeptName, onSupplyNumber, onSupplyEmailAddress, onSupplyPhoneNumber, onSupplyTimestampMinutes, onSupplyTimestampFullDate */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onStartup", function() { return onStartup; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onShutdown", function() { return onShutdown; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyName", function() { return onSupplyName; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "retrieveData", function() { return retrieveData; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyJobTitle", function() { return onSupplyJobTitle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyFileName", function() { return onSupplyFileName; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyGroupName", function() { return onSupplyGroupName; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyDeptName", function() { return onSupplyDeptName; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyNewsTitle", function() { return onSupplyNewsTitle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyPrivateMessage", function() { return onSupplyPrivateMessage; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyUpdate", function() { return onSupplyUpdate; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyUpdateShort", function() { return onSupplyUpdateShort; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyUpdateLong", function() { return onSupplyUpdateLong; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyName", function() { return onSupplyName; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyGroupName", function() { return onSupplyGroupName; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyDeptName", function() { return onSupplyDeptName; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyNumber", function() { return onSupplyNumber; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyEmailAddress", function() { return onSupplyEmailAddress; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyPhoneNumber", function() { return onSupplyPhoneNumber; });
@@ -2104,9 +2158,11 @@ function onStartup() {
 
   DataSupplier.registerDataSupplier('public.text', 'News title', 'SupplyNewsTitle'); // Register a method to supply a random private message.
 
-  DataSupplier.registerDataSupplier('public.text', 'Private message', 'SupplyPrivateMessage'); // Register a method to supply a random update.
+  DataSupplier.registerDataSupplier('public.text', 'Private message', 'SupplyPrivateMessage'); // Register a method to supply a random short update.
 
-  DataSupplier.registerDataSupplier('public.text', 'Update', 'SupplyUpdate'); // Register a method to supply a random number.
+  DataSupplier.registerDataSupplier('public.text', 'Update / Short', 'SupplyUpdateShort'); // Register a method to supply a random long update.
+
+  DataSupplier.registerDataSupplier('public.text', 'Update / Long', 'SupplyUpdateLong'); // Register a method to supply a random number.
 
   DataSupplier.registerDataSupplier('public.text', 'Number', 'SupplyNumber'); // Register a method to supply a random email address.
 
@@ -2121,6 +2177,35 @@ function onStartup() {
 function onShutdown() {
   // Deregister the plugin
   DataSupplier.deregisterDataSuppliers();
+}
+function retrieveData(filename, context) {
+  var dataKey = context.data.key;
+  var items = util.toArray(context.data.items).map(sketch.fromNative);
+
+  var dataArray = __webpack_require__("./src/data sync recursive ^\\.\\/.*\\.json$")("./" + filename + ".json");
+
+  items.forEach(function (item, index) {
+    var randomItem = dataArray[Math.floor(Math.random() * dataArray.length)];
+    DataSupplier.supplyDataAtIndex(dataKey, randomItem, index);
+  });
+}
+function onSupplyJobTitle(context) {
+  retrieveData('job-titles', context);
+}
+function onSupplyFileName(context) {
+  retrieveData('file-names', context);
+}
+function onSupplyNewsTitle(context) {
+  retrieveData('news-titles', context);
+}
+function onSupplyPrivateMessage(context) {
+  retrieveData('private-messages', context);
+}
+function onSupplyUpdateShort(context) {
+  retrieveData('updates-short', context);
+}
+function onSupplyUpdateLong(context) {
+  retrieveData('updates-long', context);
 }
 function onSupplyName(context) {
   var dataKey = context.data.key;
@@ -2138,30 +2223,6 @@ function onSupplyName(context) {
   selectedData.sort().reverse();
   items.forEach(function (item, index) {
     DataSupplier.supplyDataAtIndex(dataKey, selectedData[index], index);
-  });
-}
-function onSupplyJobTitle(context) {
-  var dataKey = context.data.key;
-  var items = util.toArray(context.data.items).map(sketch.fromNative);
-
-  var dataArray = __webpack_require__(/*! ./data/job-titles.json */ "./src/data/job-titles.json"); // Start the data to be provided at a random position in the array.
-
-
-  items.forEach(function (item, index) {
-    var randomItem = dataArray[Math.floor(Math.random() * dataArray.length)];
-    DataSupplier.supplyDataAtIndex(dataKey, randomItem, index);
-  });
-}
-function onSupplyFileName(context) {
-  var dataKey = context.data.key;
-  var items = util.toArray(context.data.items).map(sketch.fromNative);
-
-  var dataArray = __webpack_require__(/*! ./data/file-names.json */ "./src/data/file-names.json"); // Start the data to be provided at a random position in the array.
-
-
-  items.forEach(function (item, index) {
-    var randomItem = dataArray[Math.floor(Math.random() * dataArray.length)];
-    DataSupplier.supplyDataAtIndex(dataKey, randomItem, index);
   });
 }
 function onSupplyGroupName(context) {
@@ -2237,42 +2298,6 @@ function onSupplyDeptName(context) {
   selectedData.sort().reverse();
   items.forEach(function (item, index) {
     DataSupplier.supplyDataAtIndex(dataKey, selectedData[index], index);
-  });
-}
-function onSupplyNewsTitle(context) {
-  var dataKey = context.data.key;
-  var items = util.toArray(context.data.items).map(sketch.fromNative);
-
-  var dataArray = __webpack_require__(/*! ./data/news-titles.json */ "./src/data/news-titles.json"); // Start the data to be provided at a random position in the array.
-
-
-  items.forEach(function (item, index) {
-    var randomItem = dataArray[Math.floor(Math.random() * dataArray.length)];
-    DataSupplier.supplyDataAtIndex(dataKey, randomItem, index);
-  });
-}
-function onSupplyPrivateMessage(context) {
-  var dataKey = context.data.key;
-  var items = util.toArray(context.data.items).map(sketch.fromNative);
-
-  var dataArray = __webpack_require__(/*! ./data/private-messages.json */ "./src/data/private-messages.json"); // Start the data to be provided at a random position in the array.
-
-
-  items.forEach(function (item, index) {
-    var randomItem = dataArray[Math.floor(Math.random() * dataArray.length)];
-    DataSupplier.supplyDataAtIndex(dataKey, randomItem, index);
-  });
-}
-function onSupplyUpdate(context) {
-  var dataKey = context.data.key;
-  var items = util.toArray(context.data.items).map(sketch.fromNative);
-
-  var dataArray = __webpack_require__(/*! ./data/updates.json */ "./src/data/updates.json"); // Start the data to be provided at a random position in the array.
-
-
-  items.forEach(function (item, index) {
-    var randomItem = dataArray[Math.floor(Math.random() * dataArray.length)];
-    DataSupplier.supplyDataAtIndex(dataKey, randomItem, index);
   });
 }
 function onSupplyNumber(context) {
@@ -2372,7 +2397,8 @@ that['onSupplyGroupName'] = __skpm_run.bind(this, 'onSupplyGroupName');
 that['onSupplyDeptName'] = __skpm_run.bind(this, 'onSupplyDeptName');
 that['onSupplyNewsTitle'] = __skpm_run.bind(this, 'onSupplyNewsTitle');
 that['onSupplyPrivateMessage'] = __skpm_run.bind(this, 'onSupplyPrivateMessage');
-that['onSupplyUpdate'] = __skpm_run.bind(this, 'onSupplyUpdate');
+that['onSupplyUpdateShort'] = __skpm_run.bind(this, 'onSupplyUpdateShort');
+that['onSupplyUpdateLong'] = __skpm_run.bind(this, 'onSupplyUpdateLong');
 that['onSupplyNumber'] = __skpm_run.bind(this, 'onSupplyNumber');
 that['onSupplyEmailAddress'] = __skpm_run.bind(this, 'onSupplyEmailAddress');
 that['onSupplyPhoneNumber'] = __skpm_run.bind(this, 'onSupplyPhoneNumber');

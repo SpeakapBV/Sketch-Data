@@ -27,8 +27,11 @@ export function onStartup () {
   // Register a method to supply a random private message.
   DataSupplier.registerDataSupplier('public.text', 'Private message', 'SupplyPrivateMessage');
 
-  // Register a method to supply a random update.
-  DataSupplier.registerDataSupplier('public.text', 'Update', 'SupplyUpdate');
+  // Register a method to supply a random short update.
+  DataSupplier.registerDataSupplier('public.text', 'Update / Short', 'SupplyUpdateShort');
+
+  // Register a method to supply a random long update.
+  DataSupplier.registerDataSupplier('public.text', 'Update / Long', 'SupplyUpdateLong');
 
   // Register a method to supply a random number.
   DataSupplier.registerDataSupplier('public.text', 'Number', 'SupplyNumber');
@@ -51,6 +54,42 @@ export function onShutdown () {
   DataSupplier.deregisterDataSuppliers()
 }
 
+export function retrieveData (filename, context) {
+    var dataKey = context.data.key;
+    const items = util.toArray(context.data.items).map(sketch.fromNative)
+    
+    var dataArray = require('./data/' + filename + '.json');
+    
+    items.forEach((item, index) => {
+        var randomItem = dataArray[Math.floor(Math.random() * dataArray.length)];
+        DataSupplier.supplyDataAtIndex(dataKey, randomItem, index);
+    }) 
+}
+
+export function onSupplyJobTitle (context) {
+    retrieveData('job-titles', context);
+}
+
+export function onSupplyFileName (context) {
+    retrieveData('file-names', context);
+}
+
+export function onSupplyNewsTitle (context) {
+    retrieveData('news-titles', context);
+}
+
+export function onSupplyPrivateMessage (context) {
+    retrieveData('private-messages', context);
+}
+
+export function onSupplyUpdateShort (context) {
+    retrieveData('updates-short', context);
+}
+
+export function onSupplyUpdateLong (context) {
+    retrieveData('updates-long', context); 
+}
+
 export function onSupplyName (context) {
     var dataKey = context.data.key;
     const items = util.toArray(context.data.items).map(sketch.fromNative)
@@ -70,32 +109,6 @@ export function onSupplyName (context) {
     items.forEach((item, index) => {
         DataSupplier.supplyDataAtIndex(dataKey, selectedData[index], index);
     })
-}
-
-export function onSupplyJobTitle (context) {
-    var dataKey = context.data.key;
-    const items = util.toArray(context.data.items).map(sketch.fromNative)
-    
-    var dataArray = require('./data/job-titles.json');
-    
-    // Start the data to be provided at a random position in the array.
-    items.forEach((item, index) => {
-        var randomItem = dataArray[Math.floor(Math.random() * dataArray.length)];
-        DataSupplier.supplyDataAtIndex(dataKey, randomItem, index);
-    }) 
-}
-
-export function onSupplyFileName (context) {
-    var dataKey = context.data.key;
-    const items = util.toArray(context.data.items).map(sketch.fromNative)
-    
-    var dataArray = require('./data/file-names.json');
-    
-    // Start the data to be provided at a random position in the array.
-    items.forEach((item, index) => {
-        var randomItem = dataArray[Math.floor(Math.random() * dataArray.length)];
-        DataSupplier.supplyDataAtIndex(dataKey, randomItem, index);
-    }) 
 }
 
 export function onSupplyGroupName (context) {
@@ -183,45 +196,6 @@ export function onSupplyDeptName (context) {
     items.forEach((item, index) => {
         DataSupplier.supplyDataAtIndex(dataKey, selectedData[index], index);
     })
-}
-
-export function onSupplyNewsTitle (context) {
-    var dataKey = context.data.key;
-    const items = util.toArray(context.data.items).map(sketch.fromNative)
-    
-    var dataArray = require('./data/news-titles.json');
-    
-    // Start the data to be provided at a random position in the array.
-    items.forEach((item, index) => {
-        var randomItem = dataArray[Math.floor(Math.random() * dataArray.length)];
-        DataSupplier.supplyDataAtIndex(dataKey, randomItem, index);
-    }) 
-}
-
-export function onSupplyPrivateMessage (context) {
-    var dataKey = context.data.key;
-    const items = util.toArray(context.data.items).map(sketch.fromNative)
-    
-    var dataArray = require('./data/private-messages.json');
-    
-    // Start the data to be provided at a random position in the array.
-    items.forEach((item, index) => {
-        var randomItem = dataArray[Math.floor(Math.random() * dataArray.length)];
-        DataSupplier.supplyDataAtIndex(dataKey, randomItem, index);
-    }) 
-}
-
-export function onSupplyUpdate (context) {
-    var dataKey = context.data.key;
-    const items = util.toArray(context.data.items).map(sketch.fromNative)
-    
-    var dataArray = require('./data/updates.json');
-    
-    // Start the data to be provided at a random position in the array.
-    items.forEach((item, index) => {
-        var randomItem = dataArray[Math.floor(Math.random() * dataArray.length)];
-        DataSupplier.supplyDataAtIndex(dataKey, randomItem, index);
-    }) 
 }
 
 export function onSupplyNumber (context) {
