@@ -23,8 +23,8 @@
     "@skpm/builder": "^0.5.2"
   },
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/SpeakapBV/Sketch-Data.git"
+    "type": "git",
+    "url": "https://github.com/SpeakapBV/Sketch-Data.git"
   },
   "author": "Dennis de jong <dennis.jong@speakap.com>"
 }

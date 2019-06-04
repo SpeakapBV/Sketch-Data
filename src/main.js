@@ -3,55 +3,33 @@ import { strict } from 'assert';
 const sketch = require('sketch')
 const { DataSupplier } = sketch
 const util = require('util')
+var Style = require('sketch/dom').Style;
 
 export function onStartup () {
   
-  // Register a method to supply a random western name.
-  DataSupplier.registerDataSupplier('public.text', 'Western name', 'SupplyName');
+    // Register methods to supply data.
+    DataSupplier.registerDataSupplier('public.text', 'Western name', 'SupplyName');
+    DataSupplier.registerDataSupplier('public.text', 'Group name', 'SupplyGroupName');
+    DataSupplier.registerDataSupplier('public.text', 'Department name', 'SupplyDeptName');
+    DataSupplier.registerDataSupplier('public.text', 'Job title', 'SupplyJobTitle');
+    DataSupplier.registerDataSupplier('public.text', 'File name', 'SupplyFileName');
+    DataSupplier.registerDataSupplier('public.text', 'News title', 'SupplyNewsTitle');
+    DataSupplier.registerDataSupplier('public.text', 'Event title', 'SupplyEventTitle');
+    DataSupplier.registerDataSupplier('public.text', 'Private message', 'SupplyPrivateMessage');
+    DataSupplier.registerDataSupplier('public.text', 'Update / Short', 'SupplyUpdateShort');
+    DataSupplier.registerDataSupplier('public.text', 'Update / Long', 'SupplyUpdateLong');
+    DataSupplier.registerDataSupplier('public.text', 'Number', 'SupplyNumber');
+    DataSupplier.registerDataSupplier('public.text', 'Email address', 'SupplyEmailAddress');
+    DataSupplier.registerDataSupplier('public.text', 'Phone number', 'SupplyPhoneNumber');
+    DataSupplier.registerDataSupplier('public.text', 'Timestamp / Minutes', 'SupplyTimestampMinutes');
+    DataSupplier.registerDataSupplier('public.text', 'Timestamp / Full date', 'SupplyTimestampFullDate');
+    DataSupplier.registerDataSupplier('public.image', 'Country flags', 'SupplyFlag');
 
-  // Register a method to supply a random group name.
-  DataSupplier.registerDataSupplier('public.text', 'Group name', 'SupplyGroupName');
-
-  // Register a method to supply a random department name.
-  DataSupplier.registerDataSupplier('public.text', 'Department name', 'SupplyDeptName');
-  
-  // Register a method to supply a random job title.
-  DataSupplier.registerDataSupplier('public.text', 'Job title', 'SupplyJobTitle');
-
-  // Register a method to supply a random file name.
-  DataSupplier.registerDataSupplier('public.text', 'File name', 'SupplyFileName');
-
-  // Register a method to supply a random news title.
-  DataSupplier.registerDataSupplier('public.text', 'News title', 'SupplyNewsTitle');
-
-  // Register a method to supply a random private message.
-  DataSupplier.registerDataSupplier('public.text', 'Private message', 'SupplyPrivateMessage');
-
-  // Register a method to supply a random short update.
-  DataSupplier.registerDataSupplier('public.text', 'Update / Short', 'SupplyUpdateShort');
-
-  // Register a method to supply a random long update.
-  DataSupplier.registerDataSupplier('public.text', 'Update / Long', 'SupplyUpdateLong');
-
-  // Register a method to supply a random number.
-  DataSupplier.registerDataSupplier('public.text', 'Number', 'SupplyNumber');
-
-  // Register a method to supply a random email address.
-  DataSupplier.registerDataSupplier('public.text', 'Email address', 'SupplyEmailAddress');
-
-  // Register a method to supply a random phone number.
-  DataSupplier.registerDataSupplier('public.text', 'Phone number', 'SupplyPhoneNumber');
-
-  // Register a method to supply a random timestamp in minutes.
-  DataSupplier.registerDataSupplier('public.text', 'Timestamp / Minutes', 'SupplyTimestampMinutes');
-
-  // Register a method to supply a random timestamp in full date.
-  DataSupplier.registerDataSupplier('public.text', 'Timestamp / Full date', 'SupplyTimestampFullDate');
 }
 
 export function onShutdown () {
-  // Deregister the plugin
-  DataSupplier.deregisterDataSuppliers()
+    // Deregister the plugin
+    DataSupplier.deregisterDataSuppliers()
 }
 
 export function retrieveData (filename, context) {
@@ -76,6 +54,10 @@ export function onSupplyFileName (context) {
 
 export function onSupplyNewsTitle (context) {
     retrieveData('news-titles', context);
+}
+
+export function onSupplyEventTitle (context) {
+    retrieveData('event-titles', context);
 }
 
 export function onSupplyPrivateMessage (context) {
@@ -243,14 +225,13 @@ export function onSupplyTimestampMinutes (context) {
         // Get minute
         let randomNumber = Math.floor(Math.random() * Math.floor(45));
         let timestamp = randomNumber.toString() + " minutes ago";
-        //console.log(timestamp);
         DataSupplier.supplyDataAtIndex(dataKey, timestamp, index);
     }) 
 }
 
 export function onSupplyTimestampFullDate (context) {
     var dataKey = context.data.key;
-    const items = util.toArray(context.data.items).map(sketch.fromNative)
+    const items = util.toArray(context.data.items).map(sketch.fromNative);
 
     var monthsArray = ["January", "February", "March", "April", "June", "July", "August", "September", "Oktober", "November", "December"]
     
@@ -259,7 +240,66 @@ export function onSupplyTimestampFullDate (context) {
         const randomNumber = Math.floor(Math.random() * Math.floor(29));
         const randomMonth = monthsArray[Math.floor(Math.random() * monthsArray.length)];
         const timestamp = randomMonth + " " + randomNumber.toString() + ", 2019";
-        console.log(timestamp);
         DataSupplier.supplyDataAtIndex(dataKey, timestamp, index);
     }) 
+}
+
+export function onSupplyFlag (context) {
+    const dataKey = context.data.key;
+    const items = util.toArray(context.data.items).map(sketch.fromNative);
+    
+    var dataArray = require('./data/flags.json');
+
+    // Iterate over selected shapes
+    items.forEach((item, index) => {
+        const randomKey = Math.floor(Math.random() * dataArray.length);
+        const imagePath = 'https://static.staging.speakap.io/img/flags/' + dataArray[randomKey] + '.png';
+        const image = fetchImage(imagePath);
+
+        DataSupplier.supplyDataAtIndex(dataKey, imagePath, index);
+
+        setImage(image, item);
+    })
+
+    // Fetch the flag image remotely
+    function fetchImage(url,ingnoreCache) {
+        var request = ingnoreCache ?NSURLRequest.requestWithURL_cachePolicy_timeoutInterval(NSURL.URLWithString(url),NSURLRequestReloadIgnoringLocalCacheData,60) : NSURLRequest.requestWithURL(NSURL.URLWithString(url));
+        var responsePtr = MOPointer.alloc().init();
+        var errorPtr = MOPointer.alloc().init();
+    
+        var data = NSURLConnection.sendSynchronousRequest_returningResponse_error(request, responsePtr, errorPtr);
+        if(errorPtr.value() != null) {
+            print(errorPtr.value());
+            return null;
+        }
+    
+        var response = responsePtr.value();
+        if(response.statusCode() != 200) {
+            return null;
+        }
+    
+        var mimeType = response.allHeaderFields()["Content-Type"];
+        if(!mimeType || !mimeType.hasPrefix("image/")) {
+            return null;
+        }
+    
+        return NSImage.alloc().initWithData(data);
+    }
+
+    // Set image as fill
+    function setImage (image, layer) {
+
+        if(image) {
+            layer.style.fills = [{
+                fillType: Style.FillType.Pattern,
+                pattern: {
+                    patternType: Style.PatternFillType.Fit,
+                    image: MSImageData.alloc().initWithImage(image)
+                }
+            }]
+        } else {
+            console.log('No image loaded');
+            return null;
+        }
+    }
 }

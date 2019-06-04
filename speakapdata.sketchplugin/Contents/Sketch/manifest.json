@@ -18,6 +18,7 @@
           "SupplyGroupName": "onSupplyGroupName",
           "SupplyDeptName": "onSupplyDeptName",
           "SupplyNewsTitle": "onSupplyNewsTitle",
+          "SupplyEventTitle": "onSupplyEventTitle",
           "SupplyPrivateMessage": "onSupplyPrivateMessage",
           "SupplyUpdateShort": "onSupplyUpdateShort",
           "SupplyUpdateLong": "onSupplyUpdateLong",
@@ -25,7 +26,8 @@
           "SupplyEmailAddress": "onSupplyEmailAddress",
           "SupplyPhoneNumber": "onSupplyPhoneNumber",
           "SupplyTimestampMinutes": "onSupplyTimestampMinutes",
-          "SupplyTimestampFullDate": "onSupplyTimestampFullDate"
+          "SupplyTimestampFullDate": "onSupplyTimestampFullDate",
+          "SupplyFlag": "onSupplyFlag"
         }
       }
     }
@@ -38,5 +40,5 @@
   "name": "Speakap Data",
   "identifier": "Speakap Data",
   "disableCocoaScriptPreprocessor": true,
-  "appcast": "https://raw.githubusercontent.com//master/.appcast.xml"
+  "appcast": "https://raw.githubusercontent.com/SpeakapBV/Sketch-Data/master/.appcast.xml"
 }

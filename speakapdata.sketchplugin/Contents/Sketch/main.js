@@ -1977,7 +1977,9 @@ module.exports = g;
 
 var map = {
 	"./department-names.json": "./src/data/department-names.json",
+	"./event-titles.json": "./src/data/event-titles.json",
 	"./file-names.json": "./src/data/file-names.json",
+	"./flags.json": "./src/data/flags.json",
 	"./group-names.json": "./src/data/group-names.json",
 	"./job-titles.json": "./src/data/job-titles.json",
 	"./news-titles.json": "./src/data/news-titles.json",
@@ -2020,6 +2022,17 @@ module.exports = ["Commercial","Manufacturing","Research and development","Marke
 
 /***/ }),
 
+/***/ "./src/data/event-titles.json":
+/*!************************************!*\
+  !*** ./src/data/event-titles.json ***!
+  \************************************/
+/*! exports provided: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, default */
+/***/ (function(module) {
+
+module.exports = ["Team introduction","Shared tech session","Team dinner","New collection briefing","Farewell drinks","Planning session","Team A retrospective","Inventory check Q2","Christmass drinks","Photoshoot - portraits"];
+
+/***/ }),
+
 /***/ "./src/data/file-names.json":
 /*!**********************************!*\
   !*** ./src/data/file-names.json ***!
@@ -2028,6 +2041,17 @@ module.exports = ["Commercial","Manufacturing","Research and development","Marke
 /***/ (function(module) {
 
 module.exports = ["Customer Support Survey","Prospects Q3","Notes template","Brochure - New bag collection","Event Handout Final","Letterhead template","Logo bundle","Press Kit"];
+
+/***/ }),
+
+/***/ "./src/data/flags.json":
+/*!*****************************!*\
+  !*** ./src/data/flags.json ***!
+  \*****************************/
+/*! exports provided: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, default */
+/***/ (function(module) {
+
+module.exports = ["AD","AE","AF","AG","AL","AM","AR","AT","AU","AZ","BA","BB","BD","BE","BF","BG","BH","BI","BJ","BN","BO","BR","BS","BT","BW","BY","BZ","ca-ES","CA","CD","CF","CG","CH","CI","CL","CM","CN","CO","CR","CU","CV","CY","CZ","DE","DJ","DK","DM","DO","DZ","EC","EE","EG","ER","ES","ET","FI","FJ","FM","FR","FY","GA","GB","GD","GE","GH","GM","GN","GQ","GR","GT","GW","GY","HN","HR","HT","HU","ID","IE","IL","IN","IQ","IR","IS","IT","JM","JO","JP","KE","KG","KH","KI","KM","KN","KO","KP","KR","KW","KZ","LA","LB","LC","LI","LK","LR","LS","LT","LU","LV","LY","MA","MC","MD","ME","MG","MH","MK","ML","MM","MN","MR","MT","MU","MV","MW","MX","MY","MZ","NA","NE","NG","NI","NL","NO","NP","NR","NZ","OM","PA","PE","PG","PH","PK","PL","PT","PW","PY","QA","RO","RS","RU","RW","SA","SB","SC","SD","SE","SG","SI","SK","SL","SM","SN","SO","SR","SS","ST","SV","SY","SZ","TD","TG","TH","TJ","TM","TN","TO","TR","TT","TV","TW","TZ","UA","UG","US","UY","UZ","VC","VE","VN","VU","WS","YE","ZA","ZM","ZW"];
 
 /***/ }),
 
@@ -2112,7 +2136,7 @@ module.exports = ["Clara Reeve","Tamzin Sharma","Lizzie Stamp","Gabriela Robbins
 /*!*********************!*\
   !*** ./src/main.js ***!
   \*********************/
-/*! exports provided: onStartup, onShutdown, retrieveData, onSupplyJobTitle, onSupplyFileName, onSupplyNewsTitle, onSupplyPrivateMessage, onSupplyUpdateShort, onSupplyUpdateLong, onSupplyName, onSupplyGroupName, onSupplyDeptName, onSupplyNumber, onSupplyEmailAddress, onSupplyPhoneNumber, onSupplyTimestampMinutes, onSupplyTimestampFullDate */
+/*! exports provided: onStartup, onShutdown, retrieveData, onSupplyJobTitle, onSupplyFileName, onSupplyNewsTitle, onSupplyEventTitle, onSupplyPrivateMessage, onSupplyUpdateShort, onSupplyUpdateLong, onSupplyName, onSupplyGroupName, onSupplyDeptName, onSupplyNumber, onSupplyEmailAddress, onSupplyPhoneNumber, onSupplyTimestampMinutes, onSupplyTimestampFullDate, onSupplyFlag */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2123,6 +2147,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyJobTitle", function() { return onSupplyJobTitle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyFileName", function() { return onSupplyFileName; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyNewsTitle", function() { return onSupplyNewsTitle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyEventTitle", function() { return onSupplyEventTitle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyPrivateMessage", function() { return onSupplyPrivateMessage; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyUpdateShort", function() { return onSupplyUpdateShort; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyUpdateLong", function() { return onSupplyUpdateLong; });
@@ -2134,6 +2159,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyPhoneNumber", function() { return onSupplyPhoneNumber; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyTimestampMinutes", function() { return onSupplyTimestampMinutes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyTimestampFullDate", function() { return onSupplyTimestampFullDate; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onSupplyFlag", function() { return onSupplyFlag; });
 /* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! assert */ "./node_modules/assert/assert.js");
 /* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(assert__WEBPACK_IMPORTED_MODULE_0__);
 
@@ -2144,35 +2170,26 @@ var DataSupplier = sketch.DataSupplier;
 
 var util = __webpack_require__(/*! util */ "util");
 
+var Style = __webpack_require__(/*! sketch/dom */ "sketch/dom").Style;
+
 function onStartup() {
-  // Register a method to supply a random western name.
-  DataSupplier.registerDataSupplier('public.text', 'Western name', 'SupplyName'); // Register a method to supply a random group name.
-
-  DataSupplier.registerDataSupplier('public.text', 'Group name', 'SupplyGroupName'); // Register a method to supply a random department name.
-
-  DataSupplier.registerDataSupplier('public.text', 'Department name', 'SupplyDeptName'); // Register a method to supply a random job title.
-
-  DataSupplier.registerDataSupplier('public.text', 'Job title', 'SupplyJobTitle'); // Register a method to supply a random file name.
-
-  DataSupplier.registerDataSupplier('public.text', 'File name', 'SupplyFileName'); // Register a method to supply a random news title.
-
-  DataSupplier.registerDataSupplier('public.text', 'News title', 'SupplyNewsTitle'); // Register a method to supply a random private message.
-
-  DataSupplier.registerDataSupplier('public.text', 'Private message', 'SupplyPrivateMessage'); // Register a method to supply a random short update.
-
-  DataSupplier.registerDataSupplier('public.text', 'Update / Short', 'SupplyUpdateShort'); // Register a method to supply a random long update.
-
-  DataSupplier.registerDataSupplier('public.text', 'Update / Long', 'SupplyUpdateLong'); // Register a method to supply a random number.
-
-  DataSupplier.registerDataSupplier('public.text', 'Number', 'SupplyNumber'); // Register a method to supply a random email address.
-
-  DataSupplier.registerDataSupplier('public.text', 'Email address', 'SupplyEmailAddress'); // Register a method to supply a random phone number.
-
-  DataSupplier.registerDataSupplier('public.text', 'Phone number', 'SupplyPhoneNumber'); // Register a method to supply a random timestamp in minutes.
-
-  DataSupplier.registerDataSupplier('public.text', 'Timestamp / Minutes', 'SupplyTimestampMinutes'); // Register a method to supply a random timestamp in full date.
-
+  // Register methods to supply data.
+  DataSupplier.registerDataSupplier('public.text', 'Western name', 'SupplyName');
+  DataSupplier.registerDataSupplier('public.text', 'Group name', 'SupplyGroupName');
+  DataSupplier.registerDataSupplier('public.text', 'Department name', 'SupplyDeptName');
+  DataSupplier.registerDataSupplier('public.text', 'Job title', 'SupplyJobTitle');
+  DataSupplier.registerDataSupplier('public.text', 'File name', 'SupplyFileName');
+  DataSupplier.registerDataSupplier('public.text', 'News title', 'SupplyNewsTitle');
+  DataSupplier.registerDataSupplier('public.text', 'Event title', 'SupplyEventTitle');
+  DataSupplier.registerDataSupplier('public.text', 'Private message', 'SupplyPrivateMessage');
+  DataSupplier.registerDataSupplier('public.text', 'Update / Short', 'SupplyUpdateShort');
+  DataSupplier.registerDataSupplier('public.text', 'Update / Long', 'SupplyUpdateLong');
+  DataSupplier.registerDataSupplier('public.text', 'Number', 'SupplyNumber');
+  DataSupplier.registerDataSupplier('public.text', 'Email address', 'SupplyEmailAddress');
+  DataSupplier.registerDataSupplier('public.text', 'Phone number', 'SupplyPhoneNumber');
+  DataSupplier.registerDataSupplier('public.text', 'Timestamp / Minutes', 'SupplyTimestampMinutes');
   DataSupplier.registerDataSupplier('public.text', 'Timestamp / Full date', 'SupplyTimestampFullDate');
+  DataSupplier.registerDataSupplier('public.image', 'Country flags', 'SupplyFlag');
 }
 function onShutdown() {
   // Deregister the plugin
@@ -2197,6 +2214,9 @@ function onSupplyFileName(context) {
 }
 function onSupplyNewsTitle(context) {
   retrieveData('news-titles', context);
+}
+function onSupplyEventTitle(context) {
+  retrieveData('event-titles', context);
 }
 function onSupplyPrivateMessage(context) {
   retrieveData('private-messages', context);
@@ -2338,8 +2358,7 @@ function onSupplyTimestampMinutes(context) {
   items.forEach(function (item, index) {
     // Get minute
     var randomNumber = Math.floor(Math.random() * Math.floor(45));
-    var timestamp = randomNumber.toString() + " minutes ago"; //console.log(timestamp);
-
+    var timestamp = randomNumber.toString() + " minutes ago";
     DataSupplier.supplyDataAtIndex(dataKey, timestamp, index);
   });
 }
@@ -2352,9 +2371,65 @@ function onSupplyTimestampFullDate(context) {
     var randomNumber = Math.floor(Math.random() * Math.floor(29));
     var randomMonth = monthsArray[Math.floor(Math.random() * monthsArray.length)];
     var timestamp = randomMonth + " " + randomNumber.toString() + ", 2019";
-    console.log(timestamp);
     DataSupplier.supplyDataAtIndex(dataKey, timestamp, index);
   });
+}
+function onSupplyFlag(context) {
+  var dataKey = context.data.key;
+  var items = util.toArray(context.data.items).map(sketch.fromNative);
+
+  var dataArray = __webpack_require__(/*! ./data/flags.json */ "./src/data/flags.json"); // Iterate over selected shapes
+
+
+  items.forEach(function (item, index) {
+    var randomKey = Math.floor(Math.random() * dataArray.length);
+    var imagePath = 'https://static.staging.speakap.io/img/flags/' + dataArray[randomKey] + '.png';
+    var image = fetchImage(imagePath);
+    DataSupplier.supplyDataAtIndex(dataKey, imagePath, index);
+    setImage(image, item);
+  }); // Fetch the flag image remotely
+
+  function fetchImage(url, ingnoreCache) {
+    var request = ingnoreCache ? NSURLRequest.requestWithURL_cachePolicy_timeoutInterval(NSURL.URLWithString(url), NSURLRequestReloadIgnoringLocalCacheData, 60) : NSURLRequest.requestWithURL(NSURL.URLWithString(url));
+    var responsePtr = MOPointer.alloc().init();
+    var errorPtr = MOPointer.alloc().init();
+    var data = NSURLConnection.sendSynchronousRequest_returningResponse_error(request, responsePtr, errorPtr);
+
+    if (errorPtr.value() != null) {
+      print(errorPtr.value());
+      return null;
+    }
+
+    var response = responsePtr.value();
+
+    if (response.statusCode() != 200) {
+      return null;
+    }
+
+    var mimeType = response.allHeaderFields()["Content-Type"];
+
+    if (!mimeType || !mimeType.hasPrefix("image/")) {
+      return null;
+    }
+
+    return NSImage.alloc().initWithData(data);
+  } // Set image as fill
+
+
+  function setImage(image, layer) {
+    if (image) {
+      layer.style.fills = [{
+        fillType: Style.FillType.Pattern,
+        pattern: {
+          patternType: Style.PatternFillType.Fit,
+          image: MSImageData.alloc().initWithImage(image)
+        }
+      }];
+    } else {
+      console.log('No image loaded');
+      return null;
+    }
+  }
 }
 
 /***/ }),
@@ -2367,6 +2442,17 @@ function onSupplyTimestampFullDate(context) {
 /***/ (function(module, exports) {
 
 module.exports = require("sketch");
+
+/***/ }),
+
+/***/ "sketch/dom":
+/*!*****************************!*\
+  !*** external "sketch/dom" ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("sketch/dom");
 
 /***/ }),
 
@@ -2396,6 +2482,7 @@ that['onSupplyFileName'] = __skpm_run.bind(this, 'onSupplyFileName');
 that['onSupplyGroupName'] = __skpm_run.bind(this, 'onSupplyGroupName');
 that['onSupplyDeptName'] = __skpm_run.bind(this, 'onSupplyDeptName');
 that['onSupplyNewsTitle'] = __skpm_run.bind(this, 'onSupplyNewsTitle');
+that['onSupplyEventTitle'] = __skpm_run.bind(this, 'onSupplyEventTitle');
 that['onSupplyPrivateMessage'] = __skpm_run.bind(this, 'onSupplyPrivateMessage');
 that['onSupplyUpdateShort'] = __skpm_run.bind(this, 'onSupplyUpdateShort');
 that['onSupplyUpdateLong'] = __skpm_run.bind(this, 'onSupplyUpdateLong');
@@ -2404,6 +2491,7 @@ that['onSupplyEmailAddress'] = __skpm_run.bind(this, 'onSupplyEmailAddress');
 that['onSupplyPhoneNumber'] = __skpm_run.bind(this, 'onSupplyPhoneNumber');
 that['onSupplyTimestampMinutes'] = __skpm_run.bind(this, 'onSupplyTimestampMinutes');
 that['onSupplyTimestampFullDate'] = __skpm_run.bind(this, 'onSupplyTimestampFullDate');
+that['onSupplyFlag'] = __skpm_run.bind(this, 'onSupplyFlag');
 that['onRun'] = __skpm_run.bind(this, 'default')
 
 //# sourceMappingURL=main.js.map
