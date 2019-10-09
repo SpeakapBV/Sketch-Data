@@ -18,6 +18,7 @@ export function onStartup () {
     DataSupplier.registerDataSupplier('public.text', 'Private message', 'SupplyPrivateMessage');
     DataSupplier.registerDataSupplier('public.text', 'Update / Short', 'SupplyUpdateShort');
     DataSupplier.registerDataSupplier('public.text', 'Update / Long', 'SupplyUpdateLong');
+    DataSupplier.registerDataSupplier('public.text', 'FontAwesome icon name', 'SupplyIcon');
     DataSupplier.registerDataSupplier('public.text', 'Number', 'SupplyNumber');
     DataSupplier.registerDataSupplier('public.text', 'Email address', 'SupplyEmailAddress');
     DataSupplier.registerDataSupplier('public.text', 'Phone number', 'SupplyPhoneNumber');
@@ -70,6 +71,10 @@ export function onSupplyUpdateShort (context) {
 
 export function onSupplyUpdateLong (context) {
     retrieveData('updates-long', context); 
+}
+
+export function onSupplyIcon (context) {
+    retrieveData('font-awesome', context);
 }
 
 export function onSupplyName (context) {

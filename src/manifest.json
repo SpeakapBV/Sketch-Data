@@ -22,6 +22,7 @@
           "SupplyPrivateMessage": "onSupplyPrivateMessage",
           "SupplyUpdateShort": "onSupplyUpdateShort",
           "SupplyUpdateLong": "onSupplyUpdateLong",
+          "SupplyIcon": "onSupplyIcon",
           "SupplyNumber": "onSupplyNumber",
           "SupplyEmailAddress": "onSupplyEmailAddress",
           "SupplyPhoneNumber": "onSupplyPhoneNumber",
