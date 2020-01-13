@@ -1,6 +1,8 @@
-var that = this;
+var globalThis = this;
+var global = this;
 function __skpm_run (key, context) {
-  that.context = context;
+  globalThis.context = context;
+  try {
 
 var exports =
 /******/ (function(modules) { // webpackBootstrap
@@ -91,116 +93,6 @@ var exports =
 /************************************************************************/
 /******/ ({
 
-/***/ "./node_modules/@skpm/timers/immediate.js":
-/*!************************************************!*\
-  !*** ./node_modules/@skpm/timers/immediate.js ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* globals coscript, sketch */
-var timeout = __webpack_require__(/*! ./timeout */ "./node_modules/@skpm/timers/timeout.js")
-
-function setImmediate(func, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10) {
-  return timeout.setTimeout(func, 0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10)
-}
-
-function clearImmediate(id) {
-  return timeout.clearTimeout(id)
-}
-
-module.exports = {
-  setImmediate: setImmediate,
-  clearImmediate: clearImmediate
-}
-
-
-/***/ }),
-
-/***/ "./node_modules/@skpm/timers/test-if-fiber.js":
-/*!****************************************************!*\
-  !*** ./node_modules/@skpm/timers/test-if-fiber.js ***!
-  \****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = function () {
-  return typeof coscript !== 'undefined' && coscript.createFiber
-}
-
-
-/***/ }),
-
-/***/ "./node_modules/@skpm/timers/timeout.js":
-/*!**********************************************!*\
-  !*** ./node_modules/@skpm/timers/timeout.js ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* globals coscript, sketch */
-var fiberAvailable = __webpack_require__(/*! ./test-if-fiber */ "./node_modules/@skpm/timers/test-if-fiber.js")
-
-var setTimeout
-var clearTimeout
-
-var fibers = []
-
-if (fiberAvailable()) {
-  var fibers = []
-
-  setTimeout = function (func, delay, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10) {
-    // fibers takes care of keeping coscript around
-    var id = fibers.length
-    fibers.push(coscript.scheduleWithInterval_jsFunction(
-      (delay || 0) / 1000,
-      function () {
-        func(param1, param2, param3, param4, param5, param6, param7, param8, param9, param10)
-      }
-    ))
-    return id
-  }
-
-  clearTimeout = function (id) {
-    var timeout = fibers[id]
-    if (timeout) {
-      timeout.cancel() // fibers takes care of keeping coscript around
-      fibers[id] = undefined // garbage collect the fiber
-    }
-  }
-} else {
-  setTimeout = function (func, delay, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10) {
-    coscript.shouldKeepAround = true
-    var id = fibers.length
-    fibers.push(true)
-    coscript.scheduleWithInterval_jsFunction(
-      (delay || 0) / 1000,
-      function () {
-        if (fibers[id]) { // if not cleared
-          func(param1, param2, param3, param4, param5, param6, param7, param8, param9, param10)
-        }
-        clearTimeout(id)
-        if (fibers.every(function (_id) { return !_id })) { // if everything is cleared
-          coscript.shouldKeepAround = false
-        }
-      }
-    )
-    return id
-  }
-
-  clearTimeout = function (id) {
-    fibers[id] = false
-  }
-}
-
-module.exports = {
-  setTimeout: setTimeout,
-  clearTimeout: clearTimeout
-}
-
-
-/***/ }),
-
 /***/ "./node_modules/assert/assert.js":
 /*!***************************************!*\
   !*** ./node_modules/assert/assert.js ***!
@@ -209,7 +101,9 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
+
+
+var objectAssign = __webpack_require__(/*! object-assign */ "./node_modules/object-assign/index.js");
 
 // compare and isBuffer taken from https://github.com/feross/buffer/blob/680e9e5e488f22aac27599a57dc844a6315928dd/index.js
 // original notice:
@@ -252,6 +146,8 @@ function isBuffer(b) {
 }
 
 // based on node assert, original notice:
+// NB: The URL to the CommonJS spec is kept just for tradition.
+//     node-assert has evolved a lot since then, both in API and behavior.
 
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
@@ -277,7 +173,7 @@ function isBuffer(b) {
 // ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-var util = __webpack_require__(/*! util/ */ "./node_modules/util/util.js");
+var util = __webpack_require__(/*! util/ */ "./node_modules/assert/node_modules/util/util.js");
 var hasOwn = Object.prototype.hasOwnProperty;
 var pSlice = Array.prototype.slice;
 var functionsHaveNames = (function () {
@@ -692,6 +588,18 @@ assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
 
 assert.ifError = function(err) { if (err) throw err; };
 
+// Expose a strict only variant of assert
+function strict(value, message) {
+  if (!value) fail(value, true, message, '==', strict);
+}
+assert.strict = objectAssign(strict, assert, {
+  equal: assert.strictEqual,
+  deepEqual: assert.deepStrictEqual,
+  notEqual: assert.notStrictEqual,
+  notDeepEqual: assert.notDeepStrictEqual
+});
+assert.strict.strict = assert.strict;
+
 var objectKeys = Object.keys || function (obj) {
   var keys = [];
   for (var key in obj) {
@@ -700,14 +608,13 @@ var objectKeys = Object.keys || function (obj) {
   return keys;
 };
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
 
 /***/ }),
 
-/***/ "./node_modules/inherits/inherits_browser.js":
-/*!***************************************************!*\
-  !*** ./node_modules/inherits/inherits_browser.js ***!
-  \***************************************************/
+/***/ "./node_modules/assert/node_modules/inherits/inherits_browser.js":
+/*!***********************************************************************!*\
+  !*** ./node_modules/assert/node_modules/inherits/inherits_browser.js ***!
+  \***********************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -738,478 +645,10 @@ if (typeof Object.create === 'function') {
 
 /***/ }),
 
-/***/ "./node_modules/process/browser.js":
-/*!*****************************************!*\
-  !*** ./node_modules/process/browser.js ***!
-  \*****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(setTimeout, clearTimeout) {// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@skpm/timers/timeout.js */ "./node_modules/@skpm/timers/timeout.js")["setTimeout"], __webpack_require__(/*! ./node_modules/@skpm/timers/timeout.js */ "./node_modules/@skpm/timers/timeout.js")["clearTimeout"]))
-
-/***/ }),
-
-/***/ "./node_modules/promise-polyfill/lib/index.js":
-/*!****************************************************!*\
-  !*** ./node_modules/promise-polyfill/lib/index.js ***!
-  \****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(setTimeout, setImmediate) {
-
-/**
- * @this {Promise}
- */
-function finallyConstructor(callback) {
-  var constructor = this.constructor;
-  return this.then(
-    function(value) {
-      return constructor.resolve(callback()).then(function() {
-        return value;
-      });
-    },
-    function(reason) {
-      return constructor.resolve(callback()).then(function() {
-        return constructor.reject(reason);
-      });
-    }
-  );
-}
-
-// Store setTimeout reference so promise-polyfill will be unaffected by
-// other code modifying setTimeout (like sinon.useFakeTimers())
-var setTimeoutFunc = setTimeout;
-
-function noop() {}
-
-// Polyfill for Function.prototype.bind
-function bind(fn, thisArg) {
-  return function() {
-    fn.apply(thisArg, arguments);
-  };
-}
-
-/**
- * @constructor
- * @param {Function} fn
- */
-function Promise(fn) {
-  if (!(this instanceof Promise))
-    throw new TypeError('Promises must be constructed via new');
-  if (typeof fn !== 'function') throw new TypeError('not a function');
-  /** @type {!number} */
-  this._state = 0;
-  /** @type {!boolean} */
-  this._handled = false;
-  /** @type {Promise|undefined} */
-  this._value = undefined;
-  /** @type {!Array<!Function>} */
-  this._deferreds = [];
-
-  doResolve(fn, this);
-}
-
-function handle(self, deferred) {
-  while (self._state === 3) {
-    self = self._value;
-  }
-  if (self._state === 0) {
-    self._deferreds.push(deferred);
-    return;
-  }
-  self._handled = true;
-  Promise._immediateFn(function() {
-    var cb = self._state === 1 ? deferred.onFulfilled : deferred.onRejected;
-    if (cb === null) {
-      (self._state === 1 ? resolve : reject)(deferred.promise, self._value);
-      return;
-    }
-    var ret;
-    try {
-      ret = cb(self._value);
-    } catch (e) {
-      reject(deferred.promise, e);
-      return;
-    }
-    resolve(deferred.promise, ret);
-  });
-}
-
-function resolve(self, newValue) {
-  try {
-    // Promise Resolution Procedure: https://github.com/promises-aplus/promises-spec#the-promise-resolution-procedure
-    if (newValue === self)
-      throw new TypeError('A promise cannot be resolved with itself.');
-    if (
-      newValue &&
-      (typeof newValue === 'object' || typeof newValue === 'function')
-    ) {
-      var then = newValue.then;
-      if (newValue instanceof Promise) {
-        self._state = 3;
-        self._value = newValue;
-        finale(self);
-        return;
-      } else if (typeof then === 'function') {
-        doResolve(bind(then, newValue), self);
-        return;
-      }
-    }
-    self._state = 1;
-    self._value = newValue;
-    finale(self);
-  } catch (e) {
-    reject(self, e);
-  }
-}
-
-function reject(self, newValue) {
-  self._state = 2;
-  self._value = newValue;
-  finale(self);
-}
-
-function finale(self) {
-  if (self._state === 2 && self._deferreds.length === 0) {
-    Promise._immediateFn(function() {
-      if (!self._handled) {
-        Promise._unhandledRejectionFn(self._value);
-      }
-    });
-  }
-
-  for (var i = 0, len = self._deferreds.length; i < len; i++) {
-    handle(self, self._deferreds[i]);
-  }
-  self._deferreds = null;
-}
-
-/**
- * @constructor
- */
-function Handler(onFulfilled, onRejected, promise) {
-  this.onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : null;
-  this.onRejected = typeof onRejected === 'function' ? onRejected : null;
-  this.promise = promise;
-}
-
-/**
- * Take a potentially misbehaving resolver function and make sure
- * onFulfilled and onRejected are only called once.
- *
- * Makes no guarantees about asynchrony.
- */
-function doResolve(fn, self) {
-  var done = false;
-  try {
-    fn(
-      function(value) {
-        if (done) return;
-        done = true;
-        resolve(self, value);
-      },
-      function(reason) {
-        if (done) return;
-        done = true;
-        reject(self, reason);
-      }
-    );
-  } catch (ex) {
-    if (done) return;
-    done = true;
-    reject(self, ex);
-  }
-}
-
-Promise.prototype['catch'] = function(onRejected) {
-  return this.then(null, onRejected);
-};
-
-Promise.prototype.then = function(onFulfilled, onRejected) {
-  // @ts-ignore
-  var prom = new this.constructor(noop);
-
-  handle(this, new Handler(onFulfilled, onRejected, prom));
-  return prom;
-};
-
-Promise.prototype['finally'] = finallyConstructor;
-
-Promise.all = function(arr) {
-  return new Promise(function(resolve, reject) {
-    if (!arr || typeof arr.length === 'undefined')
-      throw new TypeError('Promise.all accepts an array');
-    var args = Array.prototype.slice.call(arr);
-    if (args.length === 0) return resolve([]);
-    var remaining = args.length;
-
-    function res(i, val) {
-      try {
-        if (val && (typeof val === 'object' || typeof val === 'function')) {
-          var then = val.then;
-          if (typeof then === 'function') {
-            then.call(
-              val,
-              function(val) {
-                res(i, val);
-              },
-              reject
-            );
-            return;
-          }
-        }
-        args[i] = val;
-        if (--remaining === 0) {
-          resolve(args);
-        }
-      } catch (ex) {
-        reject(ex);
-      }
-    }
-
-    for (var i = 0; i < args.length; i++) {
-      res(i, args[i]);
-    }
-  });
-};
-
-Promise.resolve = function(value) {
-  if (value && typeof value === 'object' && value.constructor === Promise) {
-    return value;
-  }
-
-  return new Promise(function(resolve) {
-    resolve(value);
-  });
-};
-
-Promise.reject = function(value) {
-  return new Promise(function(resolve, reject) {
-    reject(value);
-  });
-};
-
-Promise.race = function(values) {
-  return new Promise(function(resolve, reject) {
-    for (var i = 0, len = values.length; i < len; i++) {
-      values[i].then(resolve, reject);
-    }
-  });
-};
-
-// Use polyfill for setImmediate for performance gains
-Promise._immediateFn =
-  (typeof setImmediate === 'function' &&
-    function(fn) {
-      setImmediate(fn);
-    }) ||
-  function(fn) {
-    setTimeoutFunc(fn, 0);
-  };
-
-Promise._unhandledRejectionFn = function _unhandledRejectionFn(err) {
-  if (typeof console !== 'undefined' && console) {
-    console.warn('Possible Unhandled Promise Rejection:', err); // eslint-disable-line no-console
-  }
-};
-
-module.exports = Promise;
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@skpm/timers/timeout.js */ "./node_modules/@skpm/timers/timeout.js")["setTimeout"], __webpack_require__(/*! ./node_modules/@skpm/timers/immediate.js */ "./node_modules/@skpm/timers/immediate.js")["setImmediate"]))
-
-/***/ }),
-
-/***/ "./node_modules/util/support/isBufferBrowser.js":
-/*!******************************************************!*\
-  !*** ./node_modules/util/support/isBufferBrowser.js ***!
-  \******************************************************/
+/***/ "./node_modules/assert/node_modules/util/support/isBufferBrowser.js":
+/*!**************************************************************************!*\
+  !*** ./node_modules/assert/node_modules/util/support/isBufferBrowser.js ***!
+  \**************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -1222,14 +661,14 @@ module.exports = function isBuffer(arg) {
 
 /***/ }),
 
-/***/ "./node_modules/util/util.js":
-/*!***********************************!*\
-  !*** ./node_modules/util/util.js ***!
-  \***********************************/
+/***/ "./node_modules/assert/node_modules/util/util.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/assert/node_modules/util/util.js ***!
+  \*******************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(process, Promise) {// Copyright Joyent, Inc. and other Node contributors.
+// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
@@ -1249,16 +688,6 @@ module.exports = function isBuffer(arg) {
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-var getOwnPropertyDescriptors = Object.getOwnPropertyDescriptors ||
-  function getOwnPropertyDescriptors(obj) {
-    var keys = Object.keys(obj);
-    var descriptors = {};
-    for (var i = 0; i < keys.length; i++) {
-      descriptors[keys[i]] = Object.getOwnPropertyDescriptor(obj, keys[i]);
-    }
-    return descriptors;
-  };
 
 var formatRegExp = /%[sdj%]/g;
 exports.format = function(f) {
@@ -1304,15 +733,15 @@ exports.format = function(f) {
 // Returns a modified function which warns once by default.
 // If --no-deprecation is set, then it is a no-op.
 exports.deprecate = function(fn, msg) {
-  if (typeof process !== 'undefined' && process.noDeprecation === true) {
-    return fn;
-  }
-
   // Allow for deprecating things in the process of starting up.
-  if (typeof process === 'undefined') {
+  if (isUndefined(global.process)) {
     return function() {
       return exports.deprecate(fn, msg).apply(this, arguments);
     };
+  }
+
+  if (process.noDeprecation === true) {
+    return fn;
   }
 
   var warned = false;
@@ -1764,7 +1193,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = __webpack_require__(/*! ./support/isBuffer */ "./node_modules/util/support/isBufferBrowser.js");
+exports.isBuffer = __webpack_require__(/*! ./support/isBuffer */ "./node_modules/assert/node_modules/util/support/isBufferBrowser.js");
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -1808,7 +1237,7 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = __webpack_require__(/*! inherits */ "./node_modules/inherits/inherits_browser.js");
+exports.inherits = __webpack_require__(/*! inherits */ "./node_modules/assert/node_modules/inherits/inherits_browser.js");
 
 exports._extend = function(origin, add) {
   // Don't do anything if add isn't an object
@@ -1826,144 +1255,107 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-var kCustomPromisifiedSymbol = typeof Symbol !== 'undefined' ? Symbol('util.promisify.custom') : undefined;
-
-exports.promisify = function promisify(original) {
-  if (typeof original !== 'function')
-    throw new TypeError('The "original" argument must be of type Function');
-
-  if (kCustomPromisifiedSymbol && original[kCustomPromisifiedSymbol]) {
-    var fn = original[kCustomPromisifiedSymbol];
-    if (typeof fn !== 'function') {
-      throw new TypeError('The "util.promisify.custom" argument must be of type Function');
-    }
-    Object.defineProperty(fn, kCustomPromisifiedSymbol, {
-      value: fn, enumerable: false, writable: false, configurable: true
-    });
-    return fn;
-  }
-
-  function fn() {
-    var promiseResolve, promiseReject;
-    var promise = new Promise(function (resolve, reject) {
-      promiseResolve = resolve;
-      promiseReject = reject;
-    });
-
-    var args = [];
-    for (var i = 0; i < arguments.length; i++) {
-      args.push(arguments[i]);
-    }
-    args.push(function (err, value) {
-      if (err) {
-        promiseReject(err);
-      } else {
-        promiseResolve(value);
-      }
-    });
-
-    try {
-      original.apply(this, args);
-    } catch (err) {
-      promiseReject(err);
-    }
-
-    return promise;
-  }
-
-  Object.setPrototypeOf(fn, Object.getPrototypeOf(original));
-
-  if (kCustomPromisifiedSymbol) Object.defineProperty(fn, kCustomPromisifiedSymbol, {
-    value: fn, enumerable: false, writable: false, configurable: true
-  });
-  return Object.defineProperties(
-    fn,
-    getOwnPropertyDescriptors(original)
-  );
-}
-
-exports.promisify.custom = kCustomPromisifiedSymbol
-
-function callbackifyOnRejected(reason, cb) {
-  // `!reason` guard inspired by bluebird (Ref: https://goo.gl/t5IS6M).
-  // Because `null` is a special error value in callbacks which means "no error
-  // occurred", we error-wrap so the callback consumer can distinguish between
-  // "the promise rejected with null" or "the promise fulfilled with undefined".
-  if (!reason) {
-    var newReason = new Error('Promise was rejected with a falsy value');
-    newReason.reason = reason;
-    reason = newReason;
-  }
-  return cb(reason);
-}
-
-function callbackify(original) {
-  if (typeof original !== 'function') {
-    throw new TypeError('The "original" argument must be of type Function');
-  }
-
-  // We DO NOT return the promise as it gives the user a false sense that
-  // the promise is actually somehow related to the callback's execution
-  // and that the callback throwing will reject the promise.
-  function callbackified() {
-    var args = [];
-    for (var i = 0; i < arguments.length; i++) {
-      args.push(arguments[i]);
-    }
-
-    var maybeCb = args.pop();
-    if (typeof maybeCb !== 'function') {
-      throw new TypeError('The last argument must be of type Function');
-    }
-    var self = this;
-    var cb = function() {
-      return maybeCb.apply(self, arguments);
-    };
-    // In true node style we process the callback on `nextTick` with all the
-    // implications (stack, `uncaughtException`, `async_hooks`)
-    original.apply(this, args)
-      .then(function(ret) { process.nextTick(cb, null, ret) },
-            function(rej) { process.nextTick(callbackifyOnRejected, rej, cb) });
-  }
-
-  Object.setPrototypeOf(callbackified, Object.getPrototypeOf(original));
-  Object.defineProperties(callbackified,
-                          getOwnPropertyDescriptors(original));
-  return callbackified;
-}
-exports.callbackify = callbackify;
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../process/browser.js */ "./node_modules/process/browser.js"), __webpack_require__(/*! ./node_modules/promise-polyfill/lib/index.js */ "./node_modules/promise-polyfill/lib/index.js")))
 
 /***/ }),
 
-/***/ "./node_modules/webpack/buildin/global.js":
-/*!***********************************!*\
-  !*** (webpack)/buildin/global.js ***!
-  \***********************************/
+/***/ "./node_modules/object-assign/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/object-assign/index.js ***!
+  \*********************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-var g;
+"use strict";
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
 
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
 
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || new Function("return this")();
-} catch (e) {
-	// This works if the window reference is available
-	if (typeof window === "object") g = window;
+/* eslint-disable no-unused-vars */
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+function toObject(val) {
+	if (val === null || val === undefined) {
+		throw new TypeError('Object.assign cannot be called with null or undefined');
+	}
+
+	return Object(val);
 }
 
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
+function shouldUseNative() {
+	try {
+		if (!Object.assign) {
+			return false;
+		}
 
-module.exports = g;
+		// Detect buggy property enumeration order in older V8 versions.
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+		test1[5] = 'de';
+		if (Object.getOwnPropertyNames(test1)[0] === '5') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test2 = {};
+		for (var i = 0; i < 10; i++) {
+			test2['_' + String.fromCharCode(i)] = i;
+		}
+		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+			return test2[n];
+		});
+		if (order2.join('') !== '0123456789') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test3 = {};
+		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+			test3[letter] = letter;
+		});
+		if (Object.keys(Object.assign({}, test3)).join('') !==
+				'abcdefghijklmnopqrst') {
+			return false;
+		}
+
+		return true;
+	} catch (err) {
+		// We don't expect any of the above to throw, but better to be safe.
+		return false;
+	}
+}
+
+module.exports = shouldUseNative() ? Object.assign : function (target, source) {
+	var from;
+	var to = toObject(target);
+	var symbols;
+
+	for (var s = 1; s < arguments.length; s++) {
+		from = Object(arguments[s]);
+
+		for (var key in from) {
+			if (hasOwnProperty.call(from, key)) {
+				to[key] = from[key];
+			}
+		}
+
+		if (getOwnPropertySymbols) {
+			symbols = getOwnPropertySymbols(from);
+			for (var i = 0; i < symbols.length; i++) {
+				if (propIsEnumerable.call(from, symbols[i])) {
+					to[symbols[i]] = from[symbols[i]];
+				}
+			}
+		}
+	}
+
+	return to;
+};
 
 
 /***/ }),
@@ -2019,7 +1411,7 @@ webpackContext.id = "./src/data sync recursive ^\\.\\/.*\\.json$";
 /*! exports provided: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, default */
 /***/ (function(module) {
 
-module.exports = ["Commercial","Manufacturing","Research and development","Marketing","Product Design","Education","Accounting and Finance","Human Resource","Transportation","Management","Operations","IT","Development","Quality Assurance","Internal Communications","Information Design","Training and Publications","Customer Communications","Customer Support","Security","Recruitment"];
+module.exports = JSON.parse("[\"Commercial\",\"Manufacturing\",\"Research and development\",\"Marketing\",\"Product Design\",\"Education\",\"Accounting and Finance\",\"Human Resource\",\"Transportation\",\"Management\",\"Operations\",\"IT\",\"Development\",\"Quality Assurance\",\"Internal Communications\",\"Information Design\",\"Training and Publications\",\"Customer Communications\",\"Customer Support\",\"Security\",\"Recruitment\"]");
 
 /***/ }),
 
@@ -2030,7 +1422,7 @@ module.exports = ["Commercial","Manufacturing","Research and development","Marke
 /*! exports provided: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, default */
 /***/ (function(module) {
 
-module.exports = ["Team introduction","Shared tech session","Team dinner","New collection briefing","Farewell drinks","Planning session","Team A retrospective","Inventory check Q2","Christmass drinks","Photoshoot - portraits"];
+module.exports = JSON.parse("[\"Team introduction\",\"Shared tech session\",\"Team dinner\",\"New collection briefing\",\"Farewell drinks\",\"Planning session\",\"Team A retrospective\",\"Inventory check Q2\",\"Christmass drinks\",\"Photoshoot - portraits\"]");
 
 /***/ }),
 
@@ -2041,7 +1433,7 @@ module.exports = ["Team introduction","Shared tech session","Team dinner","New c
 /*! exports provided: 0, 1, 2, 3, 4, 5, 6, 7, default */
 /***/ (function(module) {
 
-module.exports = ["Customer Support Survey","Prospects Q3","Notes template","Brochure - New bag collection","Event Handout Final","Letterhead template","Logo bundle","Press Kit"];
+module.exports = JSON.parse("[\"Customer Support Survey\",\"Prospects Q3\",\"Notes template\",\"Brochure - New bag collection\",\"Event Handout Final\",\"Letterhead template\",\"Logo bundle\",\"Press Kit\"]");
 
 /***/ }),
 
@@ -2052,7 +1444,7 @@ module.exports = ["Customer Support Survey","Prospects Q3","Notes template","Bro
 /*! exports provided: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, default */
 /***/ (function(module) {
 
-module.exports = ["AD","AE","AF","AG","AL","AM","AR","AT","AU","AZ","BA","BB","BD","BE","BF","BG","BH","BI","BJ","BN","BO","BR","BS","BT","BW","BY","BZ","ca-ES","CA","CD","CF","CG","CH","CI","CL","CM","CN","CO","CR","CU","CV","CY","CZ","DE","DJ","DK","DM","DO","DZ","EC","EE","EG","ER","ES","ET","FI","FJ","FM","FR","FY","GA","GB","GD","GE","GH","GM","GN","GQ","GR","GT","GW","GY","HN","HR","HT","HU","ID","IE","IL","IN","IQ","IR","IS","IT","JM","JO","JP","KE","KG","KH","KI","KM","KN","KO","KP","KR","KW","KZ","LA","LB","LC","LI","LK","LR","LS","LT","LU","LV","LY","MA","MC","MD","ME","MG","MH","MK","ML","MM","MN","MR","MT","MU","MV","MW","MX","MY","MZ","NA","NE","NG","NI","NL","NO","NP","NR","NZ","OM","PA","PE","PG","PH","PK","PL","PT","PW","PY","QA","RO","RS","RU","RW","SA","SB","SC","SD","SE","SG","SI","SK","SL","SM","SN","SO","SR","SS","ST","SV","SY","SZ","TD","TG","TH","TJ","TM","TN","TO","TR","TT","TV","TW","TZ","UA","UG","US","UY","UZ","VC","VE","VN","VU","WS","YE","ZA","ZM","ZW"];
+module.exports = JSON.parse("[\"AD\",\"AE\",\"AF\",\"AG\",\"AL\",\"AM\",\"AR\",\"AT\",\"AU\",\"AZ\",\"BA\",\"BB\",\"BD\",\"BE\",\"BF\",\"BG\",\"BH\",\"BI\",\"BJ\",\"BN\",\"BO\",\"BR\",\"BS\",\"BT\",\"BW\",\"BY\",\"BZ\",\"ca-ES\",\"CA\",\"CD\",\"CF\",\"CG\",\"CH\",\"CI\",\"CL\",\"CM\",\"CN\",\"CO\",\"CR\",\"CU\",\"CV\",\"CY\",\"CZ\",\"DE\",\"DJ\",\"DK\",\"DM\",\"DO\",\"DZ\",\"EC\",\"EE\",\"EG\",\"ER\",\"ES\",\"ET\",\"FI\",\"FJ\",\"FM\",\"FR\",\"FY\",\"GA\",\"GB\",\"GD\",\"GE\",\"GH\",\"GM\",\"GN\",\"GQ\",\"GR\",\"GT\",\"GW\",\"GY\",\"HN\",\"HR\",\"HT\",\"HU\",\"ID\",\"IE\",\"IL\",\"IN\",\"IQ\",\"IR\",\"IS\",\"IT\",\"JM\",\"JO\",\"JP\",\"KE\",\"KG\",\"KH\",\"KI\",\"KM\",\"KN\",\"KO\",\"KP\",\"KR\",\"KW\",\"KZ\",\"LA\",\"LB\",\"LC\",\"LI\",\"LK\",\"LR\",\"LS\",\"LT\",\"LU\",\"LV\",\"LY\",\"MA\",\"MC\",\"MD\",\"ME\",\"MG\",\"MH\",\"MK\",\"ML\",\"MM\",\"MN\",\"MR\",\"MT\",\"MU\",\"MV\",\"MW\",\"MX\",\"MY\",\"MZ\",\"NA\",\"NE\",\"NG\",\"NI\",\"NL\",\"NO\",\"NP\",\"NR\",\"NZ\",\"OM\",\"PA\",\"PE\",\"PG\",\"PH\",\"PK\",\"PL\",\"PT\",\"PW\",\"PY\",\"QA\",\"RO\",\"RS\",\"RU\",\"RW\",\"SA\",\"SB\",\"SC\",\"SD\",\"SE\",\"SG\",\"SI\",\"SK\",\"SL\",\"SM\",\"SN\",\"SO\",\"SR\",\"SS\",\"ST\",\"SV\",\"SY\",\"SZ\",\"TD\",\"TG\",\"TH\",\"TJ\",\"TM\",\"TN\",\"TO\",\"TR\",\"TT\",\"TV\",\"TW\",\"TZ\",\"UA\",\"UG\",\"US\",\"UY\",\"UZ\",\"VC\",\"VE\",\"VN\",\"VU\",\"WS\",\"YE\",\"ZA\",\"ZM\",\"ZW\"]");
 
 /***/ }),
 
@@ -2063,7 +1455,7 @@ module.exports = ["AD","AE","AF","AG","AL","AM","AR","AT","AU","AZ","BA","BB","B
 /*! exports provided: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 768, 769, 770, 771, 772, 773, 774, 775, 776, 777, 778, 779, 780, 781, 782, 783, 784, 785, 786, 787, 788, 789, 790, 791, default */
 /***/ (function(module) {
 
-module.exports = ["address-book","address-card","adjust","alarm-clock","align-center","align-justify","align-left","align-right","allergies","ambulance","american-sign-language-interpreting","anchor","angle-double-down","angle-double-left","angle-double-right","angle-double-up","angle-down","angle-left","angle-right","angle-up","archive","arrow-alt-circle-down","arrow-alt-circle-left","arrow-alt-circle-right","arrow-alt-circle-up","arrow-alt-down","arrow-alt-from-bottom","arrow-alt-from-left","arrow-alt-from-right","arrow-alt-from-top","arrow-alt-left","arrow-alt-right","arrow-alt-square-down","arrow-alt-square-left","arrow-alt-square-right","arrow-alt-square-up","arrow-alt-to-bottom","arrow-alt-to-left","arrow-alt-to-right","arrow-alt-to-top","arrow-alt-up","arrow-circle-down","arrow-circle-left","arrow-circle-right","arrow-circle-up","arrow-down","arrow-from-bottom","arrow-from-left","arrow-from-right","arrow-from-top","arrow-left","arrow-right","arrow-square-down","arrow-square-left","arrow-square-right","arrow-square-up","arrow-to-bottom","arrow-to-left","arrow-to-right","arrow-to-top","arrow-up","arrows","arrows-alt","arrows-alt-h","arrows-alt-v","arrows-h","arrows-v","assistive-listening-systems","asterisk","at","audio-description","backward","badge","badge-check","balance-scale","ban","band-aid","barcode","barcode-alt","barcode-read","barcode-scan","bars","baseball","baseball-ball","basketball-ball","basketball-hoop","bath","battery-bolt","battery-empty","battery-full","battery-half","battery-quarter","battery-slash","battery-three-quarters","bed","beer","bell","bell-slash","bicycle","binoculars","birthday-cake","blanket","blind","bold","bolt","bomb","book","book-heart","bookmark","bowling-ball","bowling-pins","box","box-alt","box-check","box-fragile","box-full","box-heart","box-open","box-up","box-usd","boxes","boxes-alt","boxing-glove","braille","briefcase","briefcase-medical","browser","bug","building","bullhorn","bullseye","burn","bus","calculator","calendar","calendar-alt","calendar-check","calendar-edit","calendar-exclamation","calendar-minus","calendar-plus","calendar-times","camera","camera-alt","camera-retro","capsules","car","caret-circle-down","caret-circle-left","caret-circle-right","caret-circle-up","caret-down","caret-left","caret-right","caret-square-down","caret-square-left","caret-square-right","caret-square-up","caret-up","cart-arrow-down","cart-plus","certificate","chart-area","chart-bar","chart-line","chart-pie","check","check-circle","check-square","chess","chess-bishop","chess-bishop-alt","chess-board","chess-clock","chess-clock-alt","chess-king","chess-king-alt","chess-knight","chess-knight-alt","chess-pawn","chess-pawn-alt","chess-queen","chess-queen-alt","chess-rook","chess-rook-alt","chevron-circle-down","chevron-circle-left","chevron-circle-right","chevron-circle-up","chevron-double-down","chevron-double-left","chevron-double-right","chevron-double-up","chevron-down","chevron-left","chevron-right","chevron-square-down","chevron-square-left","chevron-square-right","chevron-square-up","chevron-up","child","circle","circle-notch","clipboard","clipboard-check","clipboard-list","clock","clone","closed-captioning","cloud","cloud-download","cloud-download-alt","cloud-upload","cloud-upload-alt","club","code","code-branch","code-commit","code-merge","coffee","cog","cogs","columns","comment","comment-alt","comment-alt-check","comment-alt-dots","comment-alt-edit","comment-alt-exclamation","comment-alt-lines","comment-alt-minus","comment-alt-plus","comment-alt-slash","comment-alt-smile","comment-alt-times","comment-check","comment-dots","comment-edit","comment-exclamation","comment-lines","comment-minus","comment-plus","comment-slash","comment-smile","comment-times","comments","comments-alt","compass","compress","compress-alt","compress-wide","container-storage","conveyor-belt","conveyor-belt-alt","copy","copyright","couch","credit-card","credit-card-blank","credit-card-front","cricket","crop","crosshairs","cube","cubes","curling","cut","database","deaf","desktop","desktop-alt","diagnoses","diamond","dna","dollar-sign","dolly","dolly-empty","dolly-flatbed","dolly-flatbed-alt","dolly-flatbed-empty","donate","dot-circle","dove","download","dumbbell","edit","eject","ellipsis-h","ellipsis-h-alt","ellipsis-v","ellipsis-v-alt","envelope","envelope-open","envelope-square","eraser","euro-sign","exchange","exchange-alt","exclamation","exclamation-circle","exclamation-square","exclamation-triangle","expand","expand-alt","expand-arrows","expand-arrows-alt","expand-wide","external-link","external-link-alt","external-link-square","external-link-square-alt","eye","eye-dropper","eye-slash","fast-backward","fast-forward","fax","female","field-hockey","fighter-jet","file","file-alt","file-archive","file-audio","file-check","file-code","file-edit","file-excel","file-exclamation","file-image","file-medical","file-medical-alt","file-minus","file-pdf","file-plus","file-powerpoint","file-times","file-video","file-word","film","film-alt","filter","fire","fire-extinguisher","first-aid","flag","flag-checkered","flask","folder","folder-open","font","football-ball","football-helmet","forklift","forward","fragile","frown","futbol","gamepad","gavel","gem","genderless","gift","glass-martini","globe","golf-ball","golf-club","graduation-cap","h-square","h1","h2","h3","hand-heart","hand-holding","hand-holding-box","hand-holding-heart","hand-holding-seedling","hand-holding-usd","hand-holding-water","hand-lizard","hand-paper","hand-peace","hand-point-down","hand-point-left","hand-point-right","hand-point-up","hand-pointer","hand-receiving","hand-rock","hand-scissors","hand-spock","hands","hands-heart","hands-helping","hands-usd","handshake","handshake-alt","hashtag","hdd","heading","headphones","heart","heart-circle","heart-square","heartbeat","hexagon","history","hockey-puck","hockey-sticks","home","home-heart","hospital","hospital-alt","hospital-symbol","hourglass","hourglass-end","hourglass-half","hourglass-start","i-cursor","id-badge","id-card","id-card-alt","image","images","inbox","inbox-in","inbox-out","indent","industry","industry-alt","info","info-circle","info-square","inventory","italic","jack-o-lantern","key","keyboard","lamp","language","laptop","leaf","leaf-heart","lemon","level-down","level-down-alt","level-up","level-up-alt","life-ring","lightbulb","link","lira-sign","list","list-alt","list-ol","list-ul","location-arrow","lock","lock-alt","lock-open","lock-open-alt","long-arrow-alt-down","long-arrow-alt-left","long-arrow-alt-right","long-arrow-alt-up","long-arrow-down","long-arrow-left","long-arrow-right","long-arrow-up","loveseat","low-vision","luchador","magic","magnet","male","map","map-marker","map-marker-alt","map-pin","map-signs","mars","mars-double","mars-stroke","mars-stroke-h","mars-stroke-v","medkit","meh","mercury","microchip","microphone","microphone-alt","microphone-slash","minus","minus-circle","minus-hexagon","minus-octagon","minus-square","mobile","mobile-alt","mobile-android","mobile-android-alt","money-bill","money-bill-alt","moon","motorcycle","mouse-pointer","music","neuter","newspaper","notes-medical","object-group","object-ungroup","octagon","outdent","paint-brush","pallet","pallet-alt","paper-plane","paperclip","parachute-box","paragraph","paste","pause","pause-circle","paw","pen","pen-alt","pen-square","pencil","pencil-alt","pennant","people-carry","percent","person-carry","person-dolly","person-dolly-empty","phone","phone-plus","phone-slash","phone-square","phone-volume","piggy-bank","pills","plane","plane-alt","play","play-circle","plug","plus","plus-circle","plus-hexagon","plus-octagon","plus-square","podcast","poo","portrait","pound-sign","power-off","prescription-bottle","prescription-bottle-alt","print","procedures","puzzle-piece","qrcode","question","question-circle","question-square","quidditch","quote-left","quote-right","racquet","ramp-loading","random","rectangle-landscape","rectangle-portrait","rectangle-wide","recycle","redo","redo-alt","registered","repeat","repeat-1","repeat-1-alt","repeat-alt","reply","reply-all","retweet","retweet-alt","ribbon","road","rocket","route","rss","rss-square","ruble-sign","rupee-sign","save","scanner","scanner-keyboard","scanner-touchscreen","scrubber","search","search-minus","search-plus","seedling","server","share","share-all","share-alt","share-alt-square","share-square","shekel-sign","shield","shield-alt","shield-check","ship","shipping-fast","shipping-timed","shopping-bag","shopping-basket","shopping-cart","shower","shuttlecock","sign","sign-in","sign-in-alt","sign-language","sign-out","sign-out-alt","signal","sitemap","sliders-h","sliders-h-square","sliders-v","sliders-v-square","smile","smile-plus","smoking","snowflake","sort","sort-alpha-down","sort-alpha-up","sort-amount-down","sort-amount-up","sort-down","sort-numeric-down","sort-numeric-up","sort-up","space-shuttle","spade","spinner","spinner-third","square","square-full","star","star-exclamation","star-half","step-backward","step-forward","stethoscope","sticky-note","stop","stop-circle","stopwatch","street-view","strikethrough","subscript","subway","suitcase","sun","superscript","sync","sync-alt","syringe","table","table-tennis","tablet","tablet-alt","tablet-android","tablet-android-alt","tablet-rugged","tablets","tachometer","tachometer-alt","tag","tags","tape","tasks","taxi","tennis-ball","terminal","text-height","text-width","th","th-large","th-list","thermometer","thermometer-empty","thermometer-full","thermometer-half","thermometer-quarter","thermometer-three-quarters","thumbs-down","thumbs-up","thumbtack","ticket","ticket-alt","times","times-circle","times-hexagon","times-octagon","times-square","tint","toggle-off","toggle-on","trademark","train","transgender","transgender-alt","trash","trash-alt","tree","tree-alt","triangle","trophy","trophy-alt","truck","truck-container","truck-couch","truck-loading","truck-moving","truck-ramp","tty","tv","tv-retro","umbrella","underline","undo","undo-alt","universal-access","university","unlink","unlock","unlock-alt","upload","usd-circle","usd-square","user","user-alt","user-circle","user-md","user-plus","user-secret","user-times","users","utensil-fork","utensil-knife","utensil-spoon","utensils","utensils-alt","venus","venus-double","venus-mars","vial","vials","video","video-plus","video-slash","volleyball-ball","volume-down","volume-mute","volume-off","volume-up","warehouse","warehouse-alt","watch","weight","wheelchair","whistle","wifi","window","window-alt","window-close","window-maximize","window-minimize","window-restore","wine-glass","won-sign","wrench","x-ray","yen-sign"];
+module.exports = JSON.parse("[\"address-book\",\"address-card\",\"adjust\",\"alarm-clock\",\"align-center\",\"align-justify\",\"align-left\",\"align-right\",\"allergies\",\"ambulance\",\"american-sign-language-interpreting\",\"anchor\",\"angle-double-down\",\"angle-double-left\",\"angle-double-right\",\"angle-double-up\",\"angle-down\",\"angle-left\",\"angle-right\",\"angle-up\",\"archive\",\"arrow-alt-circle-down\",\"arrow-alt-circle-left\",\"arrow-alt-circle-right\",\"arrow-alt-circle-up\",\"arrow-alt-down\",\"arrow-alt-from-bottom\",\"arrow-alt-from-left\",\"arrow-alt-from-right\",\"arrow-alt-from-top\",\"arrow-alt-left\",\"arrow-alt-right\",\"arrow-alt-square-down\",\"arrow-alt-square-left\",\"arrow-alt-square-right\",\"arrow-alt-square-up\",\"arrow-alt-to-bottom\",\"arrow-alt-to-left\",\"arrow-alt-to-right\",\"arrow-alt-to-top\",\"arrow-alt-up\",\"arrow-circle-down\",\"arrow-circle-left\",\"arrow-circle-right\",\"arrow-circle-up\",\"arrow-down\",\"arrow-from-bottom\",\"arrow-from-left\",\"arrow-from-right\",\"arrow-from-top\",\"arrow-left\",\"arrow-right\",\"arrow-square-down\",\"arrow-square-left\",\"arrow-square-right\",\"arrow-square-up\",\"arrow-to-bottom\",\"arrow-to-left\",\"arrow-to-right\",\"arrow-to-top\",\"arrow-up\",\"arrows\",\"arrows-alt\",\"arrows-alt-h\",\"arrows-alt-v\",\"arrows-h\",\"arrows-v\",\"assistive-listening-systems\",\"asterisk\",\"at\",\"audio-description\",\"backward\",\"badge\",\"badge-check\",\"balance-scale\",\"ban\",\"band-aid\",\"barcode\",\"barcode-alt\",\"barcode-read\",\"barcode-scan\",\"bars\",\"baseball\",\"baseball-ball\",\"basketball-ball\",\"basketball-hoop\",\"bath\",\"battery-bolt\",\"battery-empty\",\"battery-full\",\"battery-half\",\"battery-quarter\",\"battery-slash\",\"battery-three-quarters\",\"bed\",\"beer\",\"bell\",\"bell-slash\",\"bicycle\",\"binoculars\",\"birthday-cake\",\"blanket\",\"blind\",\"bold\",\"bolt\",\"bomb\",\"book\",\"book-heart\",\"bookmark\",\"bowling-ball\",\"bowling-pins\",\"box\",\"box-alt\",\"box-check\",\"box-fragile\",\"box-full\",\"box-heart\",\"box-open\",\"box-up\",\"box-usd\",\"boxes\",\"boxes-alt\",\"boxing-glove\",\"braille\",\"briefcase\",\"briefcase-medical\",\"browser\",\"bug\",\"building\",\"bullhorn\",\"bullseye\",\"burn\",\"bus\",\"calculator\",\"calendar\",\"calendar-alt\",\"calendar-check\",\"calendar-edit\",\"calendar-exclamation\",\"calendar-minus\",\"calendar-plus\",\"calendar-times\",\"camera\",\"camera-alt\",\"camera-retro\",\"capsules\",\"car\",\"caret-circle-down\",\"caret-circle-left\",\"caret-circle-right\",\"caret-circle-up\",\"caret-down\",\"caret-left\",\"caret-right\",\"caret-square-down\",\"caret-square-left\",\"caret-square-right\",\"caret-square-up\",\"caret-up\",\"cart-arrow-down\",\"cart-plus\",\"certificate\",\"chart-area\",\"chart-bar\",\"chart-line\",\"chart-pie\",\"check\",\"check-circle\",\"check-square\",\"chess\",\"chess-bishop\",\"chess-bishop-alt\",\"chess-board\",\"chess-clock\",\"chess-clock-alt\",\"chess-king\",\"chess-king-alt\",\"chess-knight\",\"chess-knight-alt\",\"chess-pawn\",\"chess-pawn-alt\",\"chess-queen\",\"chess-queen-alt\",\"chess-rook\",\"chess-rook-alt\",\"chevron-circle-down\",\"chevron-circle-left\",\"chevron-circle-right\",\"chevron-circle-up\",\"chevron-double-down\",\"chevron-double-left\",\"chevron-double-right\",\"chevron-double-up\",\"chevron-down\",\"chevron-left\",\"chevron-right\",\"chevron-square-down\",\"chevron-square-left\",\"chevron-square-right\",\"chevron-square-up\",\"chevron-up\",\"child\",\"circle\",\"circle-notch\",\"clipboard\",\"clipboard-check\",\"clipboard-list\",\"clock\",\"clone\",\"closed-captioning\",\"cloud\",\"cloud-download\",\"cloud-download-alt\",\"cloud-upload\",\"cloud-upload-alt\",\"club\",\"code\",\"code-branch\",\"code-commit\",\"code-merge\",\"coffee\",\"cog\",\"cogs\",\"columns\",\"comment\",\"comment-alt\",\"comment-alt-check\",\"comment-alt-dots\",\"comment-alt-edit\",\"comment-alt-exclamation\",\"comment-alt-lines\",\"comment-alt-minus\",\"comment-alt-plus\",\"comment-alt-slash\",\"comment-alt-smile\",\"comment-alt-times\",\"comment-check\",\"comment-dots\",\"comment-edit\",\"comment-exclamation\",\"comment-lines\",\"comment-minus\",\"comment-plus\",\"comment-slash\",\"comment-smile\",\"comment-times\",\"comments\",\"comments-alt\",\"compass\",\"compress\",\"compress-alt\",\"compress-wide\",\"container-storage\",\"conveyor-belt\",\"conveyor-belt-alt\",\"copy\",\"copyright\",\"couch\",\"credit-card\",\"credit-card-blank\",\"credit-card-front\",\"cricket\",\"crop\",\"crosshairs\",\"cube\",\"cubes\",\"curling\",\"cut\",\"database\",\"deaf\",\"desktop\",\"desktop-alt\",\"diagnoses\",\"diamond\",\"dna\",\"dollar-sign\",\"dolly\",\"dolly-empty\",\"dolly-flatbed\",\"dolly-flatbed-alt\",\"dolly-flatbed-empty\",\"donate\",\"dot-circle\",\"dove\",\"download\",\"dumbbell\",\"edit\",\"eject\",\"ellipsis-h\",\"ellipsis-h-alt\",\"ellipsis-v\",\"ellipsis-v-alt\",\"envelope\",\"envelope-open\",\"envelope-square\",\"eraser\",\"euro-sign\",\"exchange\",\"exchange-alt\",\"exclamation\",\"exclamation-circle\",\"exclamation-square\",\"exclamation-triangle\",\"expand\",\"expand-alt\",\"expand-arrows\",\"expand-arrows-alt\",\"expand-wide\",\"external-link\",\"external-link-alt\",\"external-link-square\",\"external-link-square-alt\",\"eye\",\"eye-dropper\",\"eye-slash\",\"fast-backward\",\"fast-forward\",\"fax\",\"female\",\"field-hockey\",\"fighter-jet\",\"file\",\"file-alt\",\"file-archive\",\"file-audio\",\"file-check\",\"file-code\",\"file-edit\",\"file-excel\",\"file-exclamation\",\"file-image\",\"file-medical\",\"file-medical-alt\",\"file-minus\",\"file-pdf\",\"file-plus\",\"file-powerpoint\",\"file-times\",\"file-video\",\"file-word\",\"film\",\"film-alt\",\"filter\",\"fire\",\"fire-extinguisher\",\"first-aid\",\"flag\",\"flag-checkered\",\"flask\",\"folder\",\"folder-open\",\"font\",\"football-ball\",\"football-helmet\",\"forklift\",\"forward\",\"fragile\",\"frown\",\"futbol\",\"gamepad\",\"gavel\",\"gem\",\"genderless\",\"gift\",\"glass-martini\",\"globe\",\"golf-ball\",\"golf-club\",\"graduation-cap\",\"h-square\",\"h1\",\"h2\",\"h3\",\"hand-heart\",\"hand-holding\",\"hand-holding-box\",\"hand-holding-heart\",\"hand-holding-seedling\",\"hand-holding-usd\",\"hand-holding-water\",\"hand-lizard\",\"hand-paper\",\"hand-peace\",\"hand-point-down\",\"hand-point-left\",\"hand-point-right\",\"hand-point-up\",\"hand-pointer\",\"hand-receiving\",\"hand-rock\",\"hand-scissors\",\"hand-spock\",\"hands\",\"hands-heart\",\"hands-helping\",\"hands-usd\",\"handshake\",\"handshake-alt\",\"hashtag\",\"hdd\",\"heading\",\"headphones\",\"heart\",\"heart-circle\",\"heart-square\",\"heartbeat\",\"hexagon\",\"history\",\"hockey-puck\",\"hockey-sticks\",\"home\",\"home-heart\",\"hospital\",\"hospital-alt\",\"hospital-symbol\",\"hourglass\",\"hourglass-end\",\"hourglass-half\",\"hourglass-start\",\"i-cursor\",\"id-badge\",\"id-card\",\"id-card-alt\",\"image\",\"images\",\"inbox\",\"inbox-in\",\"inbox-out\",\"indent\",\"industry\",\"industry-alt\",\"info\",\"info-circle\",\"info-square\",\"inventory\",\"italic\",\"jack-o-lantern\",\"key\",\"keyboard\",\"lamp\",\"language\",\"laptop\",\"leaf\",\"leaf-heart\",\"lemon\",\"level-down\",\"level-down-alt\",\"level-up\",\"level-up-alt\",\"life-ring\",\"lightbulb\",\"link\",\"lira-sign\",\"list\",\"list-alt\",\"list-ol\",\"list-ul\",\"location-arrow\",\"lock\",\"lock-alt\",\"lock-open\",\"lock-open-alt\",\"long-arrow-alt-down\",\"long-arrow-alt-left\",\"long-arrow-alt-right\",\"long-arrow-alt-up\",\"long-arrow-down\",\"long-arrow-left\",\"long-arrow-right\",\"long-arrow-up\",\"loveseat\",\"low-vision\",\"luchador\",\"magic\",\"magnet\",\"male\",\"map\",\"map-marker\",\"map-marker-alt\",\"map-pin\",\"map-signs\",\"mars\",\"mars-double\",\"mars-stroke\",\"mars-stroke-h\",\"mars-stroke-v\",\"medkit\",\"meh\",\"mercury\",\"microchip\",\"microphone\",\"microphone-alt\",\"microphone-slash\",\"minus\",\"minus-circle\",\"minus-hexagon\",\"minus-octagon\",\"minus-square\",\"mobile\",\"mobile-alt\",\"mobile-android\",\"mobile-android-alt\",\"money-bill\",\"money-bill-alt\",\"moon\",\"motorcycle\",\"mouse-pointer\",\"music\",\"neuter\",\"newspaper\",\"notes-medical\",\"object-group\",\"object-ungroup\",\"octagon\",\"outdent\",\"paint-brush\",\"pallet\",\"pallet-alt\",\"paper-plane\",\"paperclip\",\"parachute-box\",\"paragraph\",\"paste\",\"pause\",\"pause-circle\",\"paw\",\"pen\",\"pen-alt\",\"pen-square\",\"pencil\",\"pencil-alt\",\"pennant\",\"people-carry\",\"percent\",\"person-carry\",\"person-dolly\",\"person-dolly-empty\",\"phone\",\"phone-plus\",\"phone-slash\",\"phone-square\",\"phone-volume\",\"piggy-bank\",\"pills\",\"plane\",\"plane-alt\",\"play\",\"play-circle\",\"plug\",\"plus\",\"plus-circle\",\"plus-hexagon\",\"plus-octagon\",\"plus-square\",\"podcast\",\"poo\",\"portrait\",\"pound-sign\",\"power-off\",\"prescription-bottle\",\"prescription-bottle-alt\",\"print\",\"procedures\",\"puzzle-piece\",\"qrcode\",\"question\",\"question-circle\",\"question-square\",\"quidditch\",\"quote-left\",\"quote-right\",\"racquet\",\"ramp-loading\",\"random\",\"rectangle-landscape\",\"rectangle-portrait\",\"rectangle-wide\",\"recycle\",\"redo\",\"redo-alt\",\"registered\",\"repeat\",\"repeat-1\",\"repeat-1-alt\",\"repeat-alt\",\"reply\",\"reply-all\",\"retweet\",\"retweet-alt\",\"ribbon\",\"road\",\"rocket\",\"route\",\"rss\",\"rss-square\",\"ruble-sign\",\"rupee-sign\",\"save\",\"scanner\",\"scanner-keyboard\",\"scanner-touchscreen\",\"scrubber\",\"search\",\"search-minus\",\"search-plus\",\"seedling\",\"server\",\"share\",\"share-all\",\"share-alt\",\"share-alt-square\",\"share-square\",\"shekel-sign\",\"shield\",\"shield-alt\",\"shield-check\",\"ship\",\"shipping-fast\",\"shipping-timed\",\"shopping-bag\",\"shopping-basket\",\"shopping-cart\",\"shower\",\"shuttlecock\",\"sign\",\"sign-in\",\"sign-in-alt\",\"sign-language\",\"sign-out\",\"sign-out-alt\",\"signal\",\"sitemap\",\"sliders-h\",\"sliders-h-square\",\"sliders-v\",\"sliders-v-square\",\"smile\",\"smile-plus\",\"smoking\",\"snowflake\",\"sort\",\"sort-alpha-down\",\"sort-alpha-up\",\"sort-amount-down\",\"sort-amount-up\",\"sort-down\",\"sort-numeric-down\",\"sort-numeric-up\",\"sort-up\",\"space-shuttle\",\"spade\",\"spinner\",\"spinner-third\",\"square\",\"square-full\",\"star\",\"star-exclamation\",\"star-half\",\"step-backward\",\"step-forward\",\"stethoscope\",\"sticky-note\",\"stop\",\"stop-circle\",\"stopwatch\",\"street-view\",\"strikethrough\",\"subscript\",\"subway\",\"suitcase\",\"sun\",\"superscript\",\"sync\",\"sync-alt\",\"syringe\",\"table\",\"table-tennis\",\"tablet\",\"tablet-alt\",\"tablet-android\",\"tablet-android-alt\",\"tablet-rugged\",\"tablets\",\"tachometer\",\"tachometer-alt\",\"tag\",\"tags\",\"tape\",\"tasks\",\"taxi\",\"tennis-ball\",\"terminal\",\"text-height\",\"text-width\",\"th\",\"th-large\",\"th-list\",\"thermometer\",\"thermometer-empty\",\"thermometer-full\",\"thermometer-half\",\"thermometer-quarter\",\"thermometer-three-quarters\",\"thumbs-down\",\"thumbs-up\",\"thumbtack\",\"ticket\",\"ticket-alt\",\"times\",\"times-circle\",\"times-hexagon\",\"times-octagon\",\"times-square\",\"tint\",\"toggle-off\",\"toggle-on\",\"trademark\",\"train\",\"transgender\",\"transgender-alt\",\"trash\",\"trash-alt\",\"tree\",\"tree-alt\",\"triangle\",\"trophy\",\"trophy-alt\",\"truck\",\"truck-container\",\"truck-couch\",\"truck-loading\",\"truck-moving\",\"truck-ramp\",\"tty\",\"tv\",\"tv-retro\",\"umbrella\",\"underline\",\"undo\",\"undo-alt\",\"universal-access\",\"university\",\"unlink\",\"unlock\",\"unlock-alt\",\"upload\",\"usd-circle\",\"usd-square\",\"user\",\"user-alt\",\"user-circle\",\"user-md\",\"user-plus\",\"user-secret\",\"user-times\",\"users\",\"utensil-fork\",\"utensil-knife\",\"utensil-spoon\",\"utensils\",\"utensils-alt\",\"venus\",\"venus-double\",\"venus-mars\",\"vial\",\"vials\",\"video\",\"video-plus\",\"video-slash\",\"volleyball-ball\",\"volume-down\",\"volume-mute\",\"volume-off\",\"volume-up\",\"warehouse\",\"warehouse-alt\",\"watch\",\"weight\",\"wheelchair\",\"whistle\",\"wifi\",\"window\",\"window-alt\",\"window-close\",\"window-maximize\",\"window-minimize\",\"window-restore\",\"wine-glass\",\"won-sign\",\"wrench\",\"x-ray\",\"yen-sign\"]");
 
 /***/ }),
 
@@ -2074,7 +1466,7 @@ module.exports = ["address-book","address-card","adjust","alarm-clock","align-ce
 /*! exports provided: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, default */
 /***/ (function(module) {
 
-module.exports = ["Sales USA","Sales NL","Sales UK","Marketing","Product Design","Groceries","Case: CRM Implementation","HR News","Feedback & Reports","Marketing News","Company Health","Tech News","Cashiers","Company Drinks","Brainstorm","Demos","Deploy updates","Sales Successes","Design and print","Office Expansion","Recruitment","Culture Crew","Product news","Sales news","Company sports","Technical support","Board games","Customer info","Internal communication feedback","Ideas"];
+module.exports = JSON.parse("[\"Sales USA\",\"Sales NL\",\"Sales UK\",\"Marketing\",\"Product Design\",\"Groceries\",\"Case: CRM Implementation\",\"HR News\",\"Feedback & Reports\",\"Marketing News\",\"Company Health\",\"Tech News\",\"Cashiers\",\"Company Drinks\",\"Brainstorm\",\"Demos\",\"Deploy updates\",\"Sales Successes\",\"Design and print\",\"Office Expansion\",\"Recruitment\",\"Culture Crew\",\"Product news\",\"Sales news\",\"Company sports\",\"Technical support\",\"Board games\",\"Customer info\",\"Internal communication feedback\",\"Ideas\"]");
 
 /***/ }),
 
@@ -2085,7 +1477,7 @@ module.exports = ["Sales USA","Sales NL","Sales UK","Marketing","Product Design"
 /*! exports provided: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, default */
 /***/ (function(module) {
 
-module.exports = ["Floormanager","Visual Designer","Software Engineer","CTO","CFO","Software architect","Accountmanager","Manager Communications","Mobile designer","Sales Developer","Product Owner","Chief Marketing Officer","Marketing Designer","Web Developer","Cashier","Stock Clerk"];
+module.exports = JSON.parse("[\"Floormanager\",\"Visual Designer\",\"Software Engineer\",\"CTO\",\"CFO\",\"Software architect\",\"Accountmanager\",\"Manager Communications\",\"Mobile designer\",\"Sales Developer\",\"Product Owner\",\"Chief Marketing Officer\",\"Marketing Designer\",\"Web Developer\",\"Cashier\",\"Stock Clerk\"]");
 
 /***/ }),
 
@@ -2096,7 +1488,7 @@ module.exports = ["Floormanager","Visual Designer","Software Engineer","CTO","CF
 /*! exports provided: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, default */
 /***/ (function(module) {
 
-module.exports = ["HR News: New recruits for March","Hola! New weekly menu","Team dinner","New HR Guidelines","Marketing campaign is a great success!","Engagement is through the roof! 79% increase in the past month!","HR News: Pension funds","Message from our CEO","Merry X-Mas Everybody","HR News: New salary slips"];
+module.exports = JSON.parse("[\"HR News: New recruits for March\",\"Hola! New weekly menu\",\"Team dinner\",\"New HR Guidelines\",\"Marketing campaign is a great success!\",\"Engagement is through the roof! 79% increase in the past month!\",\"HR News: Pension funds\",\"Message from our CEO\",\"Merry X-Mas Everybody\",\"HR News: New salary slips\"]");
 
 /***/ }),
 
@@ -2107,7 +1499,7 @@ module.exports = ["HR News: New recruits for March","Hola! New weekly menu","Tea
 /*! exports provided: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, default */
 /***/ (function(module) {
 
-module.exports = ["Hi! Did you check the new product catalog?","No I haven’t seen it. Where can I find it?","Here you go!","Thanks, you're the best!","I have my old trusty ones ready to go with me tomorrow ;-) But thanks!","You can have some of mine, is it possible to share?","I believe so, although to be sure we will need to test it.","Thank you! I will take a look!","I will let you know as soon as I hear back from them and then F2F for sure :)","Cool, thanks!","On Tuesday, we have a 9:30 team meeting, so 10:30 is ok?","Cool. Thanks for being flexible. How's Tuesday sound? Afternoon?","Yes, on it!","Good luck, hope she recovers!"];
+module.exports = JSON.parse("[\"Hi! Did you check the new product catalog?\",\"No I haven’t seen it. Where can I find it?\",\"Here you go!\",\"Thanks, you're the best!\",\"I have my old trusty ones ready to go with me tomorrow ;-) But thanks!\",\"You can have some of mine, is it possible to share?\",\"I believe so, although to be sure we will need to test it.\",\"Thank you! I will take a look!\",\"I will let you know as soon as I hear back from them and then F2F for sure :)\",\"Cool, thanks!\",\"On Tuesday, we have a 9:30 team meeting, so 10:30 is ok?\",\"Cool. Thanks for being flexible. How's Tuesday sound? Afternoon?\",\"Yes, on it!\",\"Good luck, hope she recovers!\"]");
 
 /***/ }),
 
@@ -2118,7 +1510,7 @@ module.exports = ["Hi! Did you check the new product catalog?","No I haven’t s
 /*! exports provided: 0, 1, 2, 3, 4, 5, default */
 /***/ (function(module) {
 
-module.exports = ["As we gear up for the launch of our first research study on Jan 24, we've built a 360 degree launch plan (across all markets). Part of that includes driving some excitement/momentum for the study with a pre-launch sign up page (prompting folks to be the first to receive it when goes live). Full launch details and final assets will be provided here on Jan 24 (day of launch).","After a long recruitment process Adam Smith has been elected as our new Marketing manager. Adam will be replacing Susan as of next monday. If you want to welcome our new colleague and pay him a visit before his introduction, his office is at the third floor. Or just leave him a message on this post :-)","Family communication study looks at topics such as family rules, family roles or family dialectics and how those factors could affect the communication between family members. Researchers develop theories to understand communication behaviors. Family communication study also digs deep into certain time periods of family life such as marriage, parenthood or divorce and how communication stands in those situations. It is important for family members to understand communication as a trusted way which leads to a well constructed family.","Nonverbal cues are heavily relied on to express communication and to interpret others' communication and can replace or substitute verbal messages. However, non-verbal communication is ambiguous. When verbal messages contradict non-verbal messages, observation of non-verbal behaviour is relied on to judge another's attitudes and feelings, rather than assuming the truth of the verbal message alone.Unfortunately, we still have to cover a case when we we add something new to the resource of known message type. As we did for video in news. We believe that for this kind of cases we need to tackle the problem from the product perspective.","The landlady was going to reply, but was prevented by the peace-making sergeant, sorely to the displeasure of Partridge, who was a great lover of what is called fun, and a great promoter of those harmless quarrels which tend rather to the production of comical than tragical incidents.","We have an idea to introduce fallback for unknown message types on client side for the future. For this we will add 'fallback' section to every message type from  the API perspective. On the client side, we introduce functionality which will use fallback data from the message resource."];
+module.exports = JSON.parse("[\"As we gear up for the launch of our first research study on Jan 24, we've built a 360 degree launch plan (across all markets). Part of that includes driving some excitement/momentum for the study with a pre-launch sign up page (prompting folks to be the first to receive it when goes live). Full launch details and final assets will be provided here on Jan 24 (day of launch).\",\"After a long recruitment process Adam Smith has been elected as our new Marketing manager. Adam will be replacing Susan as of next monday. If you want to welcome our new colleague and pay him a visit before his introduction, his office is at the third floor. Or just leave him a message on this post :-)\",\"Family communication study looks at topics such as family rules, family roles or family dialectics and how those factors could affect the communication between family members. Researchers develop theories to understand communication behaviors. Family communication study also digs deep into certain time periods of family life such as marriage, parenthood or divorce and how communication stands in those situations. It is important for family members to understand communication as a trusted way which leads to a well constructed family.\",\"Nonverbal cues are heavily relied on to express communication and to interpret others' communication and can replace or substitute verbal messages. However, non-verbal communication is ambiguous. When verbal messages contradict non-verbal messages, observation of non-verbal behaviour is relied on to judge another's attitudes and feelings, rather than assuming the truth of the verbal message alone.Unfortunately, we still have to cover a case when we we add something new to the resource of known message type. As we did for video in news. We believe that for this kind of cases we need to tackle the problem from the product perspective.\",\"The landlady was going to reply, but was prevented by the peace-making sergeant, sorely to the displeasure of Partridge, who was a great lover of what is called fun, and a great promoter of those harmless quarrels which tend rather to the production of comical than tragical incidents.\",\"We have an idea to introduce fallback for unknown message types on client side for the future. For this we will add 'fallback' section to every message type from  the API perspective. On the client side, we introduce functionality which will use fallback data from the message resource.\"]");
 
 /***/ }),
 
@@ -2129,7 +1521,7 @@ module.exports = ["As we gear up for the launch of our first research study on J
 /*! exports provided: 0, 1, 2, 3, 4, 5, 6, default */
 /***/ (function(module) {
 
-module.exports = ["A car from Waternet drove past the building with the announcement that due to a calamity the water will be shut down until further notice.","Hey team, I have a birthday today! Using magic forces (thanks Jane McDoe) I've brought you these cakes. Enjoy!","New report by Johnny Snow. Also great landingpage example to showcase some information about the research before people download it by signing up, good to capture leads.","Many different non-verbal channels are engaged at the same time in communication acts and allow the chance for simultaneous messages to be sent and received.","It’s been a whirlwind few months for everyone at our company. We are delighted to announce that we are the proud first occupants of the WeWork Coworking Office Space.","I think Aarons work looks great! What do you think?","Many physical activities provide opportunities to play and have fun. Not only can these activities be fun but can also improve physical and mental states."];
+module.exports = JSON.parse("[\"A car from Waternet drove past the building with the announcement that due to a calamity the water will be shut down until further notice.\",\"Hey team, I have a birthday today! Using magic forces (thanks Jane McDoe) I've brought you these cakes. Enjoy!\",\"New report by Johnny Snow. Also great landingpage example to showcase some information about the research before people download it by signing up, good to capture leads.\",\"Many different non-verbal channels are engaged at the same time in communication acts and allow the chance for simultaneous messages to be sent and received.\",\"It’s been a whirlwind few months for everyone at our company. We are delighted to announce that we are the proud first occupants of the WeWork Coworking Office Space.\",\"I think Aarons work looks great! What do you think?\",\"Many physical activities provide opportunities to play and have fun. Not only can these activities be fun but can also improve physical and mental states.\"]");
 
 /***/ }),
 
@@ -2140,7 +1532,7 @@ module.exports = ["A car from Waternet drove past the building with the announce
 /*! exports provided: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, default */
 /***/ (function(module) {
 
-module.exports = ["Clara Reeve","Tamzin Sharma","Lizzie Stamp","Gabriela Robbins","Blossom Lees","Hadi Kidd","Harvey Drake","Patsy Palmer","Daniela Greer","Jasmin Nunez","Ahmed Lyon","Jonas Blaese","Erik Forster","Sonya Hulme","Warren Daniels","Harley Clarkson","Tyron Sexton","Abdul Haas","Igor Watkins","Betty Macfarlane","Lillian Gamble","Faheem Cunningham","Griffin Burns","Zaynah Walters","Vinay Mclean","Chanelle West","Braden Keenan","Shayan Booker","Ceri Donovan","Zishan Burks","Laura Hassan","Alberto Dunkley","Demi-Lee Hawes","Talia Mcpherson","Reanna Mill","Sheldon Phan","Caspar Stevens","Alivia Mcmanus","Keyaan Oneal","Brenda Garrison","Ayman Smith","Gethin Adams","Ayub Ryder","Miya Kent","Axel Shea","Conal Perez","Lennon Mcdermott","Ismael Mcgrath","Davey Buchanan","Cavan Crouch","Harrison Chambers","Harvir Marsh","Christos Neale","Junaid Lindsay","Aayush Wilkins","Marlie Watson","Ignacy Walker","Kimora Marriott","Joanne Lamb","Tyler-Jay Lin","Elisa Weber","Luqman Mcguire","Abdi Webb","Sakina Ferry","Ashton Le","Cillian Horner","Kashif Stein","Dainton Vang","Nabeel Fulton","Juan Solis","Zacharia Naylor","Lorelei Dodson","Giorgio Armstrong","Ebony Case","Rudy Thompson","Lauren Sutherland","Daniaal Thornton","Taya Kirkland","Darin Shepherd","Hayley Riley","Kiara Robertson","Mujtaba Horne","Nancy Anthony","Lillie-Rose Mcbride","Aliya Yates","Rajveer Chaney","Dillon Hart","Sahib Peacock","Caolan Valdez","Sonnie Cole"];
+module.exports = JSON.parse("[\"Clara Reeve\",\"Tamzin Sharma\",\"Lizzie Stamp\",\"Gabriela Robbins\",\"Blossom Lees\",\"Hadi Kidd\",\"Harvey Drake\",\"Patsy Palmer\",\"Daniela Greer\",\"Jasmin Nunez\",\"Ahmed Lyon\",\"Jonas Blaese\",\"Erik Forster\",\"Sonya Hulme\",\"Warren Daniels\",\"Harley Clarkson\",\"Tyron Sexton\",\"Abdul Haas\",\"Igor Watkins\",\"Betty Macfarlane\",\"Lillian Gamble\",\"Faheem Cunningham\",\"Griffin Burns\",\"Zaynah Walters\",\"Vinay Mclean\",\"Chanelle West\",\"Braden Keenan\",\"Shayan Booker\",\"Ceri Donovan\",\"Zishan Burks\",\"Laura Hassan\",\"Alberto Dunkley\",\"Demi-Lee Hawes\",\"Talia Mcpherson\",\"Reanna Mill\",\"Sheldon Phan\",\"Caspar Stevens\",\"Alivia Mcmanus\",\"Keyaan Oneal\",\"Brenda Garrison\",\"Ayman Smith\",\"Gethin Adams\",\"Ayub Ryder\",\"Miya Kent\",\"Axel Shea\",\"Conal Perez\",\"Lennon Mcdermott\",\"Ismael Mcgrath\",\"Davey Buchanan\",\"Cavan Crouch\",\"Harrison Chambers\",\"Harvir Marsh\",\"Christos Neale\",\"Junaid Lindsay\",\"Aayush Wilkins\",\"Marlie Watson\",\"Ignacy Walker\",\"Kimora Marriott\",\"Joanne Lamb\",\"Tyler-Jay Lin\",\"Elisa Weber\",\"Luqman Mcguire\",\"Abdi Webb\",\"Sakina Ferry\",\"Ashton Le\",\"Cillian Horner\",\"Kashif Stein\",\"Dainton Vang\",\"Nabeel Fulton\",\"Juan Solis\",\"Zacharia Naylor\",\"Lorelei Dodson\",\"Giorgio Armstrong\",\"Ebony Case\",\"Rudy Thompson\",\"Lauren Sutherland\",\"Daniaal Thornton\",\"Taya Kirkland\",\"Darin Shepherd\",\"Hayley Riley\",\"Kiara Robertson\",\"Mujtaba Horne\",\"Nancy Anthony\",\"Lillie-Rose Mcbride\",\"Aliya Yates\",\"Rajveer Chaney\",\"Dillon Hart\",\"Sahib Peacock\",\"Caolan Valdez\",\"Sonnie Cole\"]");
 
 /***/ }),
 
@@ -2485,31 +1877,40 @@ module.exports = require("util");
 /***/ })
 
 /******/ });
-  if (key === 'default' && typeof exports === 'function') {
-    exports(context);
-  } else {
-    exports[key](context);
+    if (key === 'default' && typeof exports === 'function') {
+      exports(context);
+    } else if (typeof exports[key] !== 'function') {
+      throw new Error('Missing export named "' + key + '". Your command should contain something like `export function " + key +"() {}`.');
+    } else {
+      exports[key](context);
+    }
+  } catch (err) {
+    if (typeof process !== 'undefined' && process.listenerCount && process.listenerCount('uncaughtException')) {
+      process.emit("uncaughtException", err, "uncaughtException");
+    } else {
+      throw err
+    }
   }
 }
-that['onStartup'] = __skpm_run.bind(this, 'onStartup');
-that['onShutdown'] = __skpm_run.bind(this, 'onShutdown');
-that['onSupplyName'] = __skpm_run.bind(this, 'onSupplyName');
-that['onSupplyJobTitle'] = __skpm_run.bind(this, 'onSupplyJobTitle');
-that['onSupplyFileName'] = __skpm_run.bind(this, 'onSupplyFileName');
-that['onSupplyGroupName'] = __skpm_run.bind(this, 'onSupplyGroupName');
-that['onSupplyDeptName'] = __skpm_run.bind(this, 'onSupplyDeptName');
-that['onSupplyNewsTitle'] = __skpm_run.bind(this, 'onSupplyNewsTitle');
-that['onSupplyEventTitle'] = __skpm_run.bind(this, 'onSupplyEventTitle');
-that['onSupplyPrivateMessage'] = __skpm_run.bind(this, 'onSupplyPrivateMessage');
-that['onSupplyUpdateShort'] = __skpm_run.bind(this, 'onSupplyUpdateShort');
-that['onSupplyUpdateLong'] = __skpm_run.bind(this, 'onSupplyUpdateLong');
-that['onSupplyIcon'] = __skpm_run.bind(this, 'onSupplyIcon');
-that['onSupplyNumber'] = __skpm_run.bind(this, 'onSupplyNumber');
-that['onSupplyEmailAddress'] = __skpm_run.bind(this, 'onSupplyEmailAddress');
-that['onSupplyPhoneNumber'] = __skpm_run.bind(this, 'onSupplyPhoneNumber');
-that['onSupplyTimestampMinutes'] = __skpm_run.bind(this, 'onSupplyTimestampMinutes');
-that['onSupplyTimestampFullDate'] = __skpm_run.bind(this, 'onSupplyTimestampFullDate');
-that['onSupplyFlag'] = __skpm_run.bind(this, 'onSupplyFlag');
-that['onRun'] = __skpm_run.bind(this, 'default')
+globalThis['onStartup'] = __skpm_run.bind(this, 'onStartup');
+globalThis['onShutdown'] = __skpm_run.bind(this, 'onShutdown');
+globalThis['onSupplyName'] = __skpm_run.bind(this, 'onSupplyName');
+globalThis['onSupplyJobTitle'] = __skpm_run.bind(this, 'onSupplyJobTitle');
+globalThis['onSupplyFileName'] = __skpm_run.bind(this, 'onSupplyFileName');
+globalThis['onSupplyGroupName'] = __skpm_run.bind(this, 'onSupplyGroupName');
+globalThis['onSupplyDeptName'] = __skpm_run.bind(this, 'onSupplyDeptName');
+globalThis['onSupplyNewsTitle'] = __skpm_run.bind(this, 'onSupplyNewsTitle');
+globalThis['onSupplyEventTitle'] = __skpm_run.bind(this, 'onSupplyEventTitle');
+globalThis['onSupplyPrivateMessage'] = __skpm_run.bind(this, 'onSupplyPrivateMessage');
+globalThis['onSupplyUpdateShort'] = __skpm_run.bind(this, 'onSupplyUpdateShort');
+globalThis['onSupplyUpdateLong'] = __skpm_run.bind(this, 'onSupplyUpdateLong');
+globalThis['onSupplyIcon'] = __skpm_run.bind(this, 'onSupplyIcon');
+globalThis['onSupplyNumber'] = __skpm_run.bind(this, 'onSupplyNumber');
+globalThis['onSupplyEmailAddress'] = __skpm_run.bind(this, 'onSupplyEmailAddress');
+globalThis['onSupplyPhoneNumber'] = __skpm_run.bind(this, 'onSupplyPhoneNumber');
+globalThis['onSupplyTimestampMinutes'] = __skpm_run.bind(this, 'onSupplyTimestampMinutes');
+globalThis['onSupplyTimestampFullDate'] = __skpm_run.bind(this, 'onSupplyTimestampFullDate');
+globalThis['onSupplyFlag'] = __skpm_run.bind(this, 'onSupplyFlag');
+globalThis['onRun'] = __skpm_run.bind(this, 'default')
 
 //# sourceMappingURL=main.js.map
